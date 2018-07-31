@@ -1,8 +1,8 @@
 import sys, pygame
-from Deck import Deck
-from Player import Player
-from AIPlayer import AIPlayer
-import GameFunctions as gf
+from source.Deck import Deck
+from source.Player import Player
+from source.AIPlayer import AIPlayer
+import source.GameFunctions as gf
 
 def main():
     pygame.init()

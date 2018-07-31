@@ -1,6 +1,6 @@
 import pygame
 import os
-from Player import Player
+from source.Player import Player
 
 class AIPlayer(Player):
     def __init__(self, name, position, deck):

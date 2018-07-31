@@ -1,6 +1,6 @@
 import pygame
-from Deck import Deck
-from Card import Card
+from source.Deck import Deck
+from source.Card import Card
 
 class Player:
     def __init__(self, name, position, deck):
@@ -32,8 +32,8 @@ class Player:
         """Checks if mouse position overlaps with a card's rect and toggles the card accordingly."""
         clicked_card = -1
         for card in self.hand:
-            print('Mouse position:', pygame.mouse.get_pos())
-            print('Rect Position:', card.rect)
+            # print('Mouse position:', pygame.mouse.get_pos())
+            # print('Rect Position:', card.rect)
             if card.rect.collidepoint(pygame.mouse.get_pos()):
                 # Last card that mouse position collides with.
                 clicked_card = self.hand.index(card)
