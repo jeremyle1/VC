@@ -10,7 +10,7 @@ class Card:
         if self.rank not in self.ranks or self.suit not in self.suits:
             raise ValueError
         self.selected = False
-        self.image = pygame.image.load(os.path.join('../', 'images', self.rank.lower() + '_' + self.suit + '.png'))
+        self.image = pygame.image.load(os.path.join('./source/', 'images', self.rank.lower() + '_' + self.suit + '.png'))
         self.scale_card()
         self.rect = self.image.get_rect()
 

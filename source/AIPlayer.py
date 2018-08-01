@@ -34,7 +34,7 @@ class AIPlayer(Player):
     def set_card_backs(self):
         """Transform and rotate back of cards"""
         for i in range(len(self.hand)):
-            self.card_backs.append(pygame.image.load(os.path.join('../', 'images', 'card_back.png')))
+            self.card_backs.append(pygame.image.load(os.path.join('./source/', 'images', 'card_back.png')))
         for i in range(len(self.card_backs)):
             self.card_backs[i] = pygame.transform.scale(self.card_backs[i], (150, 218))
             if self.position == 1:
