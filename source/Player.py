@@ -41,5 +41,10 @@ class Player:
         if clicked_card >= 0:
             self.hand[clicked_card].toggle_selected()
 
+    def has_3_spades(self):
+        if Card('3', 'spades') in self.hand:
+            return True
+        return False
+
     def play_cards(self):
         pass

@@ -41,5 +41,6 @@ class TestCard(unittest.TestCase):
         self.assertEqual(card1.__eq__(card3), False)
         self.assertEqual(card1.__eq__(3), False)
         self.assertEqual(card3.__eq__(card4), True)
+
 if __name__ == '__main__':
     unittest.main()
