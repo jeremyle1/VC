@@ -51,6 +51,7 @@ class Card:
         return f'{self.rank} {self.suit}'
 
     def __eq__(self, other):
+        """Returns true if two Cards have the same rank and suit."""
         if isinstance(other, Card):
             return (self.rank, self.suit) == (other.rank, other.suit)
         return False

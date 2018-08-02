@@ -42,6 +42,7 @@ class Player:
             self.hand[clicked_card].toggle_selected()
 
     def has_3_spades(self):
+        """Returns true if player has 3 of spades in their hand."""
         if Card('3', 'spades') in self.hand:
             return True
         return False
