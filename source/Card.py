@@ -49,3 +49,8 @@ class Card:
 
     def __str__(self):
         return f'{self.rank} {self.suit}'
+
+    def __eq__(self, other):
+        if isinstance(other, Card):
+            return (self.rank, self.suit) == (other.rank, other.suit)
+        return False

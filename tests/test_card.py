@@ -32,5 +32,14 @@ class TestCard(unittest.TestCase):
         card = Card('5', 'hearts')
         self.assertEqual(card.is_selected(), card.selected)
 
+    def test_eq(self):
+        card1 = Card('3', 'spades')
+        card2 = Card('3', 'spades')
+        card3 = Card('3', 'hearts')
+        card4 = Card(3, 'hearts')
+        self.assertEqual(card1.__eq__(card2), True)
+        self.assertEqual(card1.__eq__(card3), False)
+        self.assertEqual(card1.__eq__(3), False)
+        self.assertEqual(card3.__eq__(card4), True)
 if __name__ == '__main__':
     unittest.main()
