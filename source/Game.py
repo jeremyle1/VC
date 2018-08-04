@@ -1,8 +1,7 @@
 import pygame
 from source.Deck import Deck
 from source.AIPlayer import AIPlayer
-from source.Player import Player
-from source.Card import Card
+from source.HumanPlayer import HumanPlayer
 
 
 class Game:
@@ -19,7 +18,7 @@ class Game:
 
     def __init_players(self):
         """Creates players. Finds player with 3 of spades."""
-        self.players.append(Player('Jeremy', 0, self.deck))
+        self.players.append(HumanPlayer('Jeremy', 0, self.deck))
         self.players.append(AIPlayer('Bob', 1, self.deck))
         self.players.append(AIPlayer('Lamont', 2, self.deck))
         self.players.append(AIPlayer('Kobe', 3, self.deck))

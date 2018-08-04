@@ -1,6 +1,5 @@
 import sys
 import pygame
-from source.Player import Player
 
 def check_events(players):
     for event in pygame.event.get():
