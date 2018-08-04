@@ -58,6 +58,10 @@ class AIPlayer(Player):
             # Cards played during this turn are no longer in the hand.
             for card in move:
                 self.hand.remove(card)
+
+            if len(self.hand) == 0:
+                game.gameOver = True
+
             # Update time for the next player.
             game.last_time = pygame.time.get_ticks()
             game.active_player = (game.active_player + 1) % 4

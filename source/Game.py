@@ -15,6 +15,8 @@ class Game:
         # Players that are being skipped.
         self.skipped_players = {i : (False, []) for i in range(4)}
         self.last_time = pygame.time.get_ticks()
+        self.gameOver = False
+        self.playAgain = True
 
     def __init_players(self):
         """Creates players. Finds player with 3 of spades."""

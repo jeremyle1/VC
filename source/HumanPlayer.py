@@ -39,5 +39,9 @@ class HumanPlayer(Player):
             game.moves.append(move)
             for card in move:
                 self.hand.remove(card)
+
+            if len(self.hand) == 0:
+                game.gameOver = True
+
             game.last_time = pygame.time.get_ticks()
             game.active_player = (game.active_player + 1) % 4
