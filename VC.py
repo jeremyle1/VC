@@ -15,6 +15,7 @@ def main():
     while not gameOver:
         gf.check_events(game.players)
         gf.update_screen(game, screen, game.players)
+        game.next_move()
         pygame.display.flip()
 
 if __name__ == '__main__':

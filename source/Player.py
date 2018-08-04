@@ -8,6 +8,8 @@ class Player:
         self.position = position
         self.deck = deck
         self.hand = sorted(deck.deal_hand(), key=Card.hearts_high)
+        # milliseconds to pause when AI's turn.
+        self.thinking_time = 2000
 
     def printCards(self):
         for card in self.hand:
@@ -47,5 +49,11 @@ class Player:
             return True
         return False
 
-    def play_cards(self):
-        pass
+    def make_move(self, game, last_time):
+        if pygame.time.get_ticks() - last_time > self.thinking_time:
+            move = [self.hand[0]]
+            game.moves.append(move)
+            for card in move:
+                self.hand.remove(card)
+            game.last_time = pygame.time.get_ticks()
+            game.active_player = (game.active_player + 1) % 4

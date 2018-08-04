@@ -23,8 +23,8 @@ class AIPlayer(Player):
             x = -150
             y = 150
 
-        for card_back in self.card_backs:
-            screen.blit(card_back, (x, y))
+        for card in range(len(self.hand)):
+            screen.blit(self.card_backs[card], (x, y))
             # Fan cards so they don't stack on top of each other.
             if self.position == 1 or self.position == 3:
                 y += 35
@@ -43,5 +43,23 @@ class AIPlayer(Player):
                 self.card_backs[i] = pygame.transform.rotate(self.card_backs[i], 180)
             elif self.position == 3:
                 self.card_backs[i] = pygame.transform.rotate(self.card_backs[i], 90)
+
+    def find_best_move(self):
+        """Returns a list of cards that should be the best move to take. Returns empty list to skip turn."""
+        move = [self.hand[0]]
+        return move
+
+    def make_move(self, game, last_time):
+        """Process the player's turn."""
+        # Pause for a short period of time before making the move.
+        if pygame.time.get_ticks() - last_time > self.thinking_time:
+            move = self.find_best_move()
+            game.moves.append(move)
+            # Cards played during this turn are no longer in the hand.
+            for card in move:
+                self.hand.remove(card)
+            # Update time for the next player.
+            game.last_time = pygame.time.get_ticks()
+            game.active_player = (game.active_player + 1) % 4
 
 
