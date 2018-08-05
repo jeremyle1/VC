@@ -2,21 +2,25 @@ import pygame
 from source.Deck import Deck
 from source.AIPlayer import AIPlayer
 from source.HumanPlayer import HumanPlayer
-
+from source.Button import Button
 
 class Game:
     marker_color = (50, 255, 0)
-    def __init__(self):
+    def __init__(self, screen):
         self.deck = Deck()
+        self.screen = screen
         self.players = []
         self.__init_players()
         # All moves of the game => (Player.position, (Cards))
         self.moves = []
         # Players that are being skipped.
         self.skipped_players = {i : (False, []) for i in range(4)}
-        self.last_time = pygame.time.get_ticks()
         self.gameOver = False
         self.playAgain = True
+        self.last_time = pygame.time.get_ticks()
+
+        self.play_button = Button('PLAY', (100, 50), (1050, 750))
+        self.skip_button = Button('SKIP', (100, 50), (1050, 825))
 
     def __init_players(self):
         """Creates players. Finds player with 3 of spades."""
@@ -31,16 +35,23 @@ class Game:
                 self.active_player = player.position
                 break
 
-    def blit_active_player(self, screen):
+    def blit_active_player(self):
         """Draws a rectangle next to the hand of the current active player."""
         if self.active_player == 0:
-            pygame.draw.circle(screen, Game.marker_color, (175, 850), 10, 10)
+            pygame.draw.circle(self.screen, Game.marker_color, (175, 850), 10, 10)
         elif self.active_player == 1:
-            pygame.draw.circle(screen, Game.marker_color, (1165, 130), 10, 10)
+            pygame.draw.circle(self.screen, Game.marker_color, (1165, 130), 10, 10)
         elif self.active_player == 2:
-            pygame.draw.circle(screen, Game.marker_color, (275, 35), 10, 10)
+            pygame.draw.circle(self.screen, Game.marker_color, (275, 35), 10, 10)
         elif self.active_player == 3:
-            pygame.draw.circle(screen, Game.marker_color, (20, 130), 10, 10)
+            pygame.draw.circle(self.screen, Game.marker_color, (20, 130), 10, 10)
+
+    def blit_buttons(self):
+        self.play_button.blit_font_on_button()
+        self.skip_button.blit_font_on_button()
+        self.screen.blit(self.play_button.get_button_surface(), self.play_button.get_button_rect())
+        self.screen.blit(self.skip_button.get_button_surface(), self.skip_button.get_button_rect())
+        pass
 
     def next_move(self):
         if self.active_player == 0:

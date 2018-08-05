@@ -9,7 +9,7 @@ def main():
 
     playAgain = True
     while playAgain:
-        game = Game()
+        game = Game(screen)
         while not game.gameOver:
             gf.check_events(game.players)
             game.next_move()
