@@ -39,16 +39,29 @@ class HumanPlayer(Player):
             game.active_player = (game.active_player + 1) % 4
 
     def play_btn_clicked(self, game):
-        if game.play_button.hovered() and game.active_player == 0:
-            move = [self.hand[0]]
+        # Mouse should be over the play button at the time of click.
+        # Active player should be human. Move should be valid.
+        if game.play_button.hovered() and game.active_player == 0 and self.validate_move():
+            move = self.get_selected_cards()
             game.moves.append(move)
             for card in move:
                 self.hand.remove(card)
+
             if len(self.hand) == 0:
                 game.gameOver = True
 
             game.last_time = pygame.time.get_ticks()
             game.active_player = (game.active_player + 1) % 4
+
+    # TODO: implement this method
+    def validate_move(self):
+        """Returns True if the selected cards make up a valid move."""
+        return True
+
+    def get_selected_cards(self):
+        """"Returns a list of the selected cards."""
+        cards = [card for card in self.hand if card.selected]
+        return cards
 
     def make_move(self, game, last_time):
         pass
