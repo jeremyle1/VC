@@ -47,11 +47,11 @@ class Game:
             pygame.draw.circle(self.screen, Game.marker_color, (20, 130), 10, 10)
 
     def blit_buttons(self):
-        self.play_button.blit_font_on_button()
-        self.skip_button.blit_font_on_button()
-        self.screen.blit(self.play_button.get_button_surface(), self.play_button.get_button_rect())
-        self.screen.blit(self.skip_button.get_button_surface(), self.skip_button.get_button_rect())
-        pass
+        if self.active_player == 0:
+            self.play_button.blit_font()
+            self.skip_button.blit_font()
+            self.screen.blit(self.play_button.get_button_surface(), self.play_button.get_button_rect())
+            self.screen.blit(self.skip_button.get_button_surface(), self.skip_button.get_button_rect())
 
     def next_move(self):
         if self.active_player == 0:

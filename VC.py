@@ -11,7 +11,7 @@ def main():
     while playAgain:
         game = Game(screen)
         while not game.gameOver:
-            gf.check_events(game.players)
+            gf.check_events(game)
             game.next_move()
             gf.update_screen(game, screen, game.players)
             pygame.display.flip()

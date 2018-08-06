@@ -33,15 +33,22 @@ class HumanPlayer(Player):
         if clicked_card >= 0:
             self.hand[clicked_card].toggle_selected()
 
-    def make_move(self, game, last_time):
-        if pygame.time.get_ticks() - last_time > self.thinking_time:
+    def skip_btn_clicked(self, game):
+        if game.skip_button.hovered() and game.active_player == 0:
+            game.last_time = pygame.time.get_ticks()
+            game.active_player = (game.active_player + 1) % 4
+
+    def play_btn_clicked(self, game):
+        if game.play_button.hovered() and game.active_player == 0:
             move = [self.hand[0]]
             game.moves.append(move)
             for card in move:
                 self.hand.remove(card)
-
             if len(self.hand) == 0:
                 game.gameOver = True
 
             game.last_time = pygame.time.get_ticks()
             game.active_player = (game.active_player + 1) % 4
+
+    def make_move(self, game, last_time):
+        pass
