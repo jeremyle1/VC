@@ -47,11 +47,21 @@ class HumanPlayer(Player):
             for card in move:
                 self.hand.remove(card)
 
-            if len(self.hand) == 0:
+        # Game ends after three players have empty hands.
+            empty_hands = 0
+            for player in game.players:
+                if len(player.hand) == 0:
+                    empty_hands += 1
+            if empty_hands == 3:
                 game.gameOver = True
+                return
 
             game.last_time = pygame.time.get_ticks()
+
             game.active_player = (game.active_player + 1) % 4
+            while len(game.players[game.active_player].hand) == 0:
+                print(game.active_player)
+                game.active_player = (game.active_player + 1) % 4
 
     # TODO: implement this method
     def validate_move(self):
