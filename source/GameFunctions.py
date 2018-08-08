@@ -20,3 +20,4 @@ def update_screen(game, screen, players):
     # Draw marker to indicate active player.
     game.blit_active_player()
     game.blit_buttons()
+    game.blit_move()

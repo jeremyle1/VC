@@ -58,10 +58,13 @@ class HumanPlayer(Player):
 
             game.last_time = pygame.time.get_ticks()
 
+            # Find next player turn.
             game.active_player = (game.active_player + 1) % 4
             while len(game.players[game.active_player].hand) == 0:
                 print(game.active_player)
                 game.active_player = (game.active_player + 1) % 4
+
+            game.current_move = move
 
     # TODO: implement this method
     def validate_move(self):

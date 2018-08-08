@@ -76,4 +76,4 @@ class AIPlayer(Player):
                 game.active_player = (game.active_player + 1) % 4
                 print(game.active_player)
 
-
+            return move

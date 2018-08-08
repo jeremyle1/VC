@@ -33,6 +33,10 @@ class Card:
         self.rect.y = y
         screen.blit(self.image, self.rect)
 
+    def blit_center(self, screen, center):
+        self.rect.center = center
+        screen.blit(self.image, self.rect)
+
     def scale_card(self):
         self.image = pygame.transform.scale(self.image, (150, 218))
 
