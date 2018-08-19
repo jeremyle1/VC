@@ -40,3 +40,42 @@ def double_straight(cards):
 
     # Return True if the ranks of the doubles make a straight.
     return straight(cards_copy[::2])
+
+def beats(cards1, cards2):
+    """Returns true if cards2 can beat cards1.
+        cards1, cards2: list of Card objects
+    """
+    cards1 = sorted(cards1, key=Card.hearts_high)
+    cards2 = sorted(cards2, key=Card.hearts_high)
+    if len(cards1) == 1:
+        # Single 2 can be beaten by a double straight, a quad, or a higher 2.
+        if cards1[0].rank == '2':
+            if (len(cards2) == 6 and double_straight(cards2)) or quad(cards2):
+                return True
+        return len(cards2) == 1 and cards2[0].hearts_high() > cards1[0].hearts_high()
+    elif double(cards1):
+        # Double 2's can be beaten by a double straight with 4 pairs
+        if cards1[0].rank == '2':
+            if len(cards2) == 8 and double_straight(cards2):
+                return True
+        return double(cards2) and cards2[-1].hearts_high() > cards1[-1].hearts_high()
+    elif triple(cards1):
+        # Double 2's can be beaten by a double straight with 5 pairs
+        if cards1[0].rank == '2':
+            if len(cards2) == 10 and double_straight(cards2):
+                return True
+        return triple(cards2) and cards2[-1].hearts_high() > cards1[-1].hearts_high()
+    elif quad(cards1):
+        return quad(cards2) and cards2[-1].hearts_high() > cards1[-1].hearts_high()
+    elif straight(cards1):
+        # True if lengths are the same, both are straights, and last card of cards2 is greater than last card of cards1
+        return len(cards1) == len(cards2) and straight(cards2) and cards2[-1].hearts_high() > cards1[-1].hearts_high()
+    elif double_straight(cards1):
+        return len(cards1) == len(cards2) and double_straight(cards2) and\
+               cards2[-1].hearts_high() > cards1[-1].hearts_high()
+
+    return False
+
+def possible_moves(cards1, cards2):
+    """Returns a list of possible moves of cards2 hand that can beat cards1."""
+    pass

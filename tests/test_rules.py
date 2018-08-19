@@ -80,5 +80,67 @@ class TestRules(unittest.TestCase):
                                                                 'J', 'J', 'Q', 'Q', 'K', 'K', 'A', 'A']]
         self.assertEqual(Rules.double_straight(cards9), True)
 
+    def test_beats(self):
+        # Singles
+        self.assertEqual(Rules.beats([Card(3, 'spades')], [Card(3, 'spades')]), False)
+        self.assertEqual(Rules.beats([Card(3, 'spades')], [Card(2, 'spades')]), True)
+        self.assertEqual(Rules.beats([Card(3, 'clubs')], [Card(3, 'spades')]), False)
+        self.assertEqual(Rules.beats([Card(3, 'spades')], [Card('J', 'hearts')]), True)
+        self.assertEqual(Rules.beats([], []), False)
+        quad_chop = [Card('3', suit) for suit in suits]
+        self.assertEqual(Rules.beats([Card(2, 'hearts')], quad_chop), True)
+        dbl_straight_chop = [Card(3, 'spades'), Card(3, 'clubs'), Card(4, 'diamonds'), Card(4, 'hearts'),
+                             Card(5, 'clubs'), Card(5, 'diamonds')]
+        self.assertEqual(Rules.beats([Card(2, 'spades')], dbl_straight_chop), True)
+        # Doubles
+        cards1 = [Card(3, 'spades'), Card(3, 'diamonds')]
+        cards2 = [Card(3, 'clubs'), Card(3, 'hearts')]
+        self.assertEqual(Rules.beats(cards1, cards2), True)
+        cards3 = [Card(3, 'clubs'), Card(3, 'hearts')]
+        cards4 = [Card(4, 'clubs'), Card(4, 'hearts')]
+        self.assertEqual(Rules.beats(cards3, cards4), True)
+        cards5 = [Card(2, 'clubs'), Card(2, 'hearts')]
+        cards6 = [Card('A', 'clubs'), Card('A', 'hearts')]
+        self.assertEqual(Rules.beats(cards5, cards6), False)
+        cards7 = [Card('Q', 'clubs'), Card('Q', 'hearts')]
+        cards8 = [Card('Q', 'clubs'), Card('Q', 'diamonds')]
+        self.assertEqual(Rules.beats(cards7, cards8), False)
+        cards9 = [Card('Q', 'clubs'), Card('J', 'hearts')]
+        cards10 = [Card('Q', 'clubs'), Card('J', 'diamonds')]
+        self.assertEqual(Rules.beats(cards9, cards10), False)
+        # Triples
+        cards9 = [Card('Q', 'clubs'), Card('Q', 'diamonds'), Card('Q', 'spades')]
+        cards10 = [Card('Q', 'clubs'), Card('Q', 'diamonds'), Card('Q', 'hearts')]
+        self.assertEqual(Rules.beats(cards9, cards10), True)
+        cards11 = [Card('Q', 'clubs'), Card('Q', 'diamonds'), Card('Q', 'hearts')]
+        cards12 = [Card('Q', 'clubs'), Card('Q', 'diamonds'), Card('Q', 'hearts')]
+        self.assertEqual(Rules.beats(cards11, cards12), False)
+        cards13 = [Card('9', 'hearts'), Card('9', 'diamonds'), Card('9', 'spades')]
+        cards14 = [Card('10', 'hearts'), Card('10', 'diamonds'), Card('10', 'spades')]
+        self.assertEqual(Rules.beats(cards13, cards14), True)
+        cards13 = [Card('9', 'hearts'), Card('9', 'diamonds'), Card('9', 'spades')]
+        cards14 = [Card('7', 'hearts'), Card('7', 'diamonds'), Card('7', 'spades')]
+        self.assertEqual(Rules.beats(cards13, cards14), False)
+        cards15 = [Card('9', 'hearts'), Card('9', 'diamonds'), Card('9', 'spades')]
+        cards16 = [Card('A', 'hearts'), Card('10', 'diamonds'), Card('A', 'spades')]
+        self.assertEqual(Rules.beats(cards15, cards16), False)
+        # Quads
+        cards17 = [Card('Q', 'clubs'), Card('Q', 'diamonds'), Card('Q', 'spades'), Card('Q', 'spades')]
+        cards18 = [Card('Q', 'clubs'), Card('Q', 'diamonds'), Card('Q', 'spades'), Card('Q', 'hearts')]
+        self.assertEqual(Rules.beats(cards17, cards18), True)
+        cards19 = [Card('Q', 'clubs'), Card('Q', 'diamonds'), Card('Q', 'hearts'), Card('Q', 'hearts')]
+        cards20 = [Card('Q', 'clubs'), Card('Q', 'diamonds'), Card('Q', 'hearts'), Card('Q', 'hearts')]
+        self.assertEqual(Rules.beats(cards19, cards20), False)
+        cards21 = [Card('9', 'hearts'), Card('9', 'diamonds'), Card('9', 'spades'), Card('9', 'clubs')]
+        cards22 = [Card('10', 'hearts'), Card('10', 'diamonds'), Card('10', 'spades'), Card('10', 'clubs')]
+        self.assertEqual(Rules.beats(cards21, cards22), True)
+        cards23 = [Card('9', 'hearts'), Card('9', 'diamonds'), Card('9', 'spades'), Card('9', 'clubs')]
+        cards24 = [Card('7', 'hearts'), Card('7', 'diamonds'), Card('7', 'spades'), Card('7', 'clubs')]
+        self.assertEqual(Rules.beats(cards23, cards24), False)
+        cards25 = [Card('9', 'hearts'), Card('9', 'diamonds'), Card('9', 'spades'), Card('9', 'clubs')]
+        cards26 = [Card('A', 'hearts'), Card('10', 'diamonds'), Card('A', 'spades'), Card('A', 'clubs')]
+        self.assertEqual(Rules.beats(cards25, cards26), False)
+
+
 if __name__ == '__main__':
     unittest.main()
