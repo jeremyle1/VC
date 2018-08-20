@@ -140,7 +140,33 @@ class TestRules(unittest.TestCase):
         cards25 = [Card('9', 'hearts'), Card('9', 'diamonds'), Card('9', 'spades'), Card('9', 'clubs')]
         cards26 = [Card('A', 'hearts'), Card('10', 'diamonds'), Card('A', 'spades'), Card('A', 'clubs')]
         self.assertEqual(Rules.beats(cards25, cards26), False)
-
+        # Straights
+        cards27 = [Card('3', 'spades'), Card('4', 'clubs'), Card('5', 'diamonds')]
+        cards28 = [Card('3', 'spades'), Card('4', 'clubs'), Card('5', 'hearts')]
+        self.assertEqual(Rules.beats(cards27, cards28), True)
+        cards29 = [Card('3', 'spades'), Card('4', 'clubs'), Card('5', 'diamonds')]
+        cards30 = [Card('3', 'spades'), Card('4', 'clubs'), Card('5', 'diamonds')]
+        self.assertEqual(Rules.beats(cards29, cards30), False)
+        cards31 = [Card('3', 'spades'), Card('4', 'clubs'), Card('5', 'diamonds')]
+        cards32 = [Card('K', 'spades'), Card('A', 'clubs'), Card('2', 'hearts')]
+        self.assertEqual(Rules.beats(cards31, cards32), False)
+        cards33 = [Card('Q', 'spades'), Card('K', 'clubs'), Card('A', 'hearts')]
+        cards34 = [Card('K', 'spades'), Card('A', 'clubs'), Card('2', 'spades')]
+        self.assertEqual(Rules.beats(cards33, cards34), False)
+        # Double Straights
+        cards35 = [Card(rank, 'spades') for rank in [3,3,4,4,5,5]]
+        cards36 = [Card(rank, 'spades') for rank in [4,4,5,5,6,6]]
+        self.assertEqual(Rules.beats(cards35, cards36), True)
+        cards35 = [Card(rank, 'spades') for rank in [3, 3, 4, 4, 5, 5]]
+        cards36 = [Card(rank, 'spades') for rank in [4, 4, 5, 5, 7, 7]]
+        self.assertEqual(Rules.beats(cards35, cards36), False)
+        cards37 = [Card(rank, 'spades') for rank in [3, 3, 4, 4, 5, 5]]
+        cards38 = [Card(rank, 'spades') for rank in ['K', 'K', 'A', 'A', 2, 2]]
+        self.assertEqual(Rules.beats(cards37, cards38), False)
+        cards39 = [Card(rank, 'spades') for rank in [3, 3, 4, 4, 5, 5]]
+        cards40 = [Card(rank, 'spades') for rank in [3, 3, 4, 4]]
+        cards40.extend([Card('5', 'spades'), Card('5', 'clubs')])
+        self.assertEqual(Rules.beats(cards39, cards40), True)
 
 if __name__ == '__main__':
     unittest.main()
