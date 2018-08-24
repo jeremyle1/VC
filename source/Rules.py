@@ -76,6 +76,54 @@ def beats(cards1, cards2):
 
     return False
 
-def possible_moves(cards1, cards2):
-    """Returns a list of possible moves of cards2 hand that can beat cards1."""
+def _find_doubles(cards1, cards2):
+    """Find doubles in cards2 that can beat cards1.
+    cards1: a list containing a pair of cards with the same rank.
+    cards2: a list of cards."""
+    moves = []
+    for i in range(0, len(cards2) - 1):
+        for j in range(i + 1, len(cards2)):
+            if beats(cards1, [cards2[i], cards2[j]]):
+                moves.append([cards2[i], cards2[j]])
+
+    return moves
+
+def _find_triples(cards1, cards2):
+    """Find doubles in cards2 that can beat cards1.
+        cards1: a list containing three cards with the same rank.
+        cards2: a list of cards."""
+    moves = []
+    for i in range(0, len(cards2) - 2):
+        for j in range(i + 1, len(cards2)-1):
+            for k in range(j + 1, len(cards2)):
+                if beats(cards1, [cards2[i], cards2[j], cards2[k]]):
+                    moves.append([cards2[i], cards2[j], cards2[k]])
+
+    return moves
+
+def find_quads():
     pass
+
+def possible_moves(cards1, cards2):
+    """Returns a list of possible moves of cards2 hand that can beat cards1.
+    cards1: list of Cards (valid move))
+    cards2: list of cards (hand)"""
+    cards1 = sorted(cards1, key=Card.hearts_high)
+    cards2 = sorted(cards2, key=Card.hearts_high)
+    moves = []
+    if len(cards1) == 1:
+        for card in cards2:
+            if card.hearts_high() > cards1[0].hearts_high():
+                moves.append(card)
+    elif double(cards1):
+        moves = _find_doubles(cards1, cards2)
+    elif triple(cards1):
+        moves = _find_triples(cards1, cards2)
+    elif quad(cards1):
+        pass
+    elif straight(cards1):
+        pass
+    elif double-straight(cards1):
+        pass
+
+    return moves

@@ -64,7 +64,8 @@ class HumanPlayer(Player):
                 print(game.active_player)
                 game.active_player = (game.active_player + 1) % 4
 
-            game.current_move = move
+            if move:
+                game.current_move = move
 
     # TODO: implement this method
     def validate_move(self):
