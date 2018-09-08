@@ -1,4 +1,5 @@
 from source.Card import Card
+import os
 
 def double(cards):
     """Returns true if length of cards is 2 and both have the same rank."""
@@ -101,13 +102,122 @@ def _find_triples(cards1, cards2):
 
     return moves
 
-def find_quads():
-    pass
+def _find_quads(cards1, cards2):
+    """Find quads in cards2 that can beat cards1.
+    cards1: a list containing a four of a kind.
+    cards2: a list of cards."""
+
+    # Quads must be in a hand of at least 4 cards.
+    if len(cards2) < 4:
+        return []
+
+    moves = []
+    i = 0
+    while i <= len(cards2):
+        # Found a quad that can beat cards1.
+        if beats(cards1, cards2[i:i+4]):
+            moves.append(cards2[i:i+4])
+            # The current 4 cards can't be apart of another quad.
+            i = i + 4
+        else:
+            # Check for quad starting with the next card.
+            i = i + 1
+
+    return moves
+
+def _find_straights(cards1, cards2):
+    """Find straights in cards2 that can beat cards1.
+    cards1: a sorted list of cards consisting of a straight.
+    cards2: a sorted list of cards."""
+
+    if len(cards2) < len(cards1):
+        return []
+
+    ranks = [str(n) for n in range(3, 11)] + list('JQKA')
+    cards2_copy = [card for card in cards2 if card.rank != '2']
+    moves = []
+    straight_cards = []
+
+    cards2_ranks = []
+    current_rank = cards2_copy[0].rank
+    same_ranks = []
+    # Separate unique ranks into their own lists.
+    for card in cards2_copy:
+        # card has same rank as current_rank, append to same_ranks
+        if card.rank == current_rank:
+            same_ranks.append(card)
+        # card has different rank than current_rank
+        else:
+            # Append list of cards with previous rank to cards2_ranks.
+            cards2_ranks.append(same_ranks)
+            # Update current_rank
+            current_rank = card.rank
+            same_ranks = [card]
+            # Last card in cards2_copy.
+        if card == cards2_copy[-1]:
+            cards2_ranks.append(same_ranks)
+
+    # Number of unique ranks of cards2 is less than length of cards1, or they are the same length but last rank is a 2.
+    if (len(cards2_ranks) < len(cards1)) or (len(cards2_ranks) == len(cards1) and cards2_ranks[-1][0].rank == '2'):
+        return []
+
+    # Find cards that can make straights.
+    for i in range(len(cards2_ranks)):
+        # There are not enough remaining cards to make a straight.
+        if(len(cards2_ranks)-i) < len(cards1):
+            break
+
+        # Lowest rank of straight must be equal to or greater than lowest rank of cards1
+        if ranks.index(cards2_ranks[i][0].rank) < ranks.index(cards1[0].rank):
+            continue
+
+        temp_ranks = []
+        # next len(cards1) ranks make up a straight.
+        if straight([cards[0] for cards in cards2_ranks[i:i+len(cards1)]]):
+            # first len(cards1)-1 ranks always belong to the straight
+            temp_straight = cards2_ranks[i:i+len(cards1)-1]
+            if temp_straight[0][0].rank == cards1[0].rank:
+                # len(cards1) element of cards2_ranks has to have greater suit+rank than the last card of cards1.
+                for card in cards2_ranks[i+len(cards1)-1]:
+                    if card.hearts_high() > cards1[-1].hearts_high():
+                        temp_ranks.append(card)
+                temp_straight.append(temp_ranks)
+                # Last cards of straight are greater than or equal to last card of cards1
+                if temp_ranks:
+                    straight_cards.append(temp_straight)
+            # Last cards of straight are greater than or equal to last card of cards1
+            else:
+                temp_straight.append(cards2_ranks[i+len(cards1)-1])
+                straight_cards.append(temp_straight)
+
+    for s in straight_cards:
+        moves.extend(_straight_combinations(s))
+
+    return moves
+
+def _straight_combinations(cards):
+    """Returns a list of lists where each list contains Cards that make a straight. The length of each straight
+        is the number of unique ranks in cards.
+
+    cards: a list of list of Cards with length at least 3, where each succeeding Card is one rank higher than the
+            previous.
+            e.g. [[3,3], [4,4], [5], [6, 6]]"""
+
+    temp = []
+    if not cards:
+        return [[]]
+    else:
+        for card in cards[0]:
+            for combination in _straight_combinations(cards[1:]):
+                temp.append([card] + combination)
+        return temp
+
 
 def possible_moves(cards1, cards2):
     """Returns a list of possible moves of cards2 hand that can beat cards1.
     cards1: list of Cards (valid move))
     cards2: list of cards (hand)"""
+
     cards1 = sorted(cards1, key=Card.hearts_high)
     cards2 = sorted(cards2, key=Card.hearts_high)
     moves = []
@@ -120,10 +230,11 @@ def possible_moves(cards1, cards2):
     elif triple(cards1):
         moves = _find_triples(cards1, cards2)
     elif quad(cards1):
-        pass
+        moves = _find_quads(cards1, cards2)
     elif straight(cards1):
-        pass
+        moves = _find_straights(cards1, cards2)
     elif double-straight(cards1):
         pass
 
     return moves
+

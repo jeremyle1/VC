@@ -196,6 +196,27 @@ class TestRules(unittest.TestCase):
                          [[Card('4', 'spades'), Card('4', 'clubs'), Card('4', 'diamonds')],
                           [Card('7', 'spades'), Card('7', 'diamonds'), Card('7', 'hearts')]])
         # Quads
+        cards13 = [Card('3', 'spades'), Card('3', 'clubs'), Card('3', 'diamonds'), Card('3', 'hearts')]
+        cards14 = [Card('4', 'spades'), Card('4', 'clubs'), Card('4', 'diamonds'), Card('4', 'hearts')]
+        self.assertEqual(Rules.possible_moves(cards13, cards14),
+                         [[Card('4', 'spades'), Card('4', 'clubs'), Card('4', 'diamonds'), Card('4', 'hearts')]])
+        cards15 = [Card('3', 'spades'), Card('3', 'clubs'), Card('3', 'diamonds'), Card('3', 'hearts')]
+        cards16 = [Card('4', 'spades'), Card('4', 'clubs'), Card('4', 'diamonds')]
+        self.assertEqual(Rules.possible_moves(cards15, cards16), [])
+        cards17 = [Card('3', 'spades'), Card('3', 'clubs'), Card('3', 'diamonds'), Card('3', 'hearts')]
+        cards18 = [Card('4', 'spades'), Card('4', 'clubs'), Card('4', 'diamonds'), Card('5', 'hearts')]
+        self.assertEqual(Rules.possible_moves(cards17, cards18), [])
+        cards19 = [Card('3', 'spades'), Card('3', 'clubs'), Card('3', 'diamonds'), Card('3', 'hearts')]
+        cards20 = [Card('4', 'spades'), Card('4', 'clubs'), Card('4', 'diamonds'), Card('4', 'hearts'),
+                   Card('5', 'clubs')]
+        self.assertEqual(Rules.possible_moves(cards19, cards20),
+                         [[Card('4', 'spades'), Card('4', 'clubs'), Card('4', 'diamonds'), Card('4', 'hearts')]])
+        cards21 = [Card('3', 'spades'), Card('3', 'clubs'), Card('3', 'diamonds'), Card('3', 'hearts')]
+        cards22 = [Card('4', 'spades'), Card('4', 'clubs'), Card('4', 'diamonds'), Card('4', 'hearts'),
+                   Card('7', 'spades'), Card('7', 'clubs'), Card('7', 'diamonds'), Card('7', 'hearts')]
+        self.assertEqual(Rules.possible_moves(cards21, cards22),
+                         [[Card('4', 'spades'), Card('4', 'clubs'), Card('4', 'diamonds'), Card('4', 'hearts')],
+                          [Card('7', 'spades'), Card('7', 'clubs'), Card('7', 'diamonds'), Card('7', 'hearts')]])
 
 if __name__ == '__main__':
     unittest.main()
