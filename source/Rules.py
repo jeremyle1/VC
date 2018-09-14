@@ -135,12 +135,15 @@ def _find_straights(cards1, cards2):
 
     ranks = [str(n) for n in range(3, 11)] + list('JQKA')
     cards2_copy = [card for card in cards2 if card.rank != '2']
+    # List of lists of cards. Every inner list is a subset of cards2 that can beat cards1.
     moves = []
     straight_cards = []
 
+    # List of lists of cards. One inner list contains a subset of cards from cards2_copy, all with the same rank.
     cards2_ranks = []
-    current_rank = cards2_copy[0].rank
+    # Temporary list that contains cards which all have the same rank.
     same_ranks = []
+    current_rank = cards2_copy[0].rank
     # Separate unique ranks into their own lists.
     for card in cards2_copy:
         # card has same rank as current_rank, append to same_ranks
@@ -171,11 +174,13 @@ def _find_straights(cards1, cards2):
         if ranks.index(cards2_ranks[i][0].rank) < ranks.index(cards1[0].rank):
             continue
 
+        # Cards that are greater than the last card of cards1.
         temp_ranks = []
         # next len(cards1) ranks make up a straight.
         if straight([cards[0] for cards in cards2_ranks[i:i+len(cards1)]]):
             # first len(cards1)-1 ranks always belong to the straight
             temp_straight = cards2_ranks[i:i+len(cards1)-1]
+            # Last card of cards1 has same rank as the last card of the cards2 straight. Suits must be compared.
             if temp_straight[0][0].rank == cards1[0].rank:
                 # len(cards1) element of cards2_ranks has to have greater suit+rank than the last card of cards1.
                 for card in cards2_ranks[i+len(cards1)-1]:

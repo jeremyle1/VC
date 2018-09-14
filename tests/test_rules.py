@@ -176,6 +176,7 @@ class TestRules(unittest.TestCase):
         cards3 = [Card('2', 'hearts')]
         cards4 = [Card('3', 'clubs'), Card('4', 'spades'), Card('A', 'diamonds'), Card('2', 'spades')]
         self.assertEqual(Rules.possible_moves(cards3, cards4), [])
+
         # Doubles
         cards5 = [Card('3', 'clubs'), Card('3', 'hearts')]
         cards6 = [Card('4', 'spades'), Card('4', 'clubs'), Card('5', 'diamonds'), Card('5', 'hearts')]
@@ -184,6 +185,7 @@ class TestRules(unittest.TestCase):
         cards7 = [Card('3', 'clubs'), Card('3', 'hearts')]
         cards8 = [Card('4', 'spades'), Card('5', 'clubs'), Card('6', 'diamonds'), Card('7', 'hearts')]
         self.assertEqual(Rules.possible_moves(cards7, cards8), [])
+
         # Triples
         cards9 = [Card('3', 'clubs'), Card('3', 'diamonds'), Card('3', 'hearts')]
         cards10 = [Card('4', 'spades'), Card('4', 'clubs'), Card('4', 'diamonds'), Card('7', 'hearts')]
@@ -195,6 +197,7 @@ class TestRules(unittest.TestCase):
         self.assertEqual(Rules.possible_moves(cards11, cards12),
                          [[Card('4', 'spades'), Card('4', 'clubs'), Card('4', 'diamonds')],
                           [Card('7', 'spades'), Card('7', 'diamonds'), Card('7', 'hearts')]])
+
         # Quads
         cards13 = [Card('3', 'spades'), Card('3', 'clubs'), Card('3', 'diamonds'), Card('3', 'hearts')]
         cards14 = [Card('4', 'spades'), Card('4', 'clubs'), Card('4', 'diamonds'), Card('4', 'hearts')]
@@ -217,6 +220,42 @@ class TestRules(unittest.TestCase):
         self.assertEqual(Rules.possible_moves(cards21, cards22),
                          [[Card('4', 'spades'), Card('4', 'clubs'), Card('4', 'diamonds'), Card('4', 'hearts')],
                           [Card('7', 'spades'), Card('7', 'clubs'), Card('7', 'diamonds'), Card('7', 'hearts')]])
+
+        # Straights
+        cards23 = [Card('3', 'spades'), Card('4', 'spades'), Card('5', 'spades')]
+        cards24 = [Card('2', 'hearts')]
+        self.assertEqual(Rules.possible_moves(cards23, cards24), [])
+        cards25 = [Card('3', 'spades'), Card('4', 'spades'), Card('5', 'spades')]
+        cards26 = [Card('3', 'spades'), Card('4', 'spades'), Card('5', 'hearts')]
+        self.assertEqual(Rules.possible_moves(cards25, cards26),
+                         [[Card('3', 'spades'), Card('4', 'spades'), Card('5', 'hearts')]])
+        cards27 = [Card('3', 'spades'), Card('4', 'spades'), Card('5', 'spades')]
+        cards28 = [Card('3', 'spades'), Card('4', 'spades'), Card('5', 'hearts'), Card('5', 'diamonds')]
+        self.assertEqual(Rules.possible_moves(cards27, cards28),
+                         [[Card('3', 'spades'), Card('4', 'spades'), Card('5', 'diamonds')],
+                          [Card('3', 'spades'), Card('4', 'spades'), Card('5', 'hearts')]])
+        cards29 = [Card('3', 'spades'), Card('4', 'spades'), Card('5', 'spades')]
+        cards30 = [Card('3', 'spades'), Card('4', 'spades'), Card('5', 'spades')]
+        self.assertEqual(Rules.possible_moves(cards29, cards30), [])
+        cards31 = [Card('3', 'spades'), Card('4', 'spades'), Card('5', 'spades')]
+        cards32 = [Card('3', 'spades'), Card('4', 'spades'), Card('5', 'hearts'), Card('6', 'spades')]
+        self.assertEqual(Rules.possible_moves(cards31, cards32),
+                         [[Card('3', 'spades'), Card('4', 'spades'), Card('5', 'hearts')],
+                          [Card('4', 'spades'), Card('5', 'hearts'), Card('6', 'spades')]])
+        cards33 = [Card('3', 'spades'), Card('4', 'spades'), Card('5', 'spades')]
+        cards34 = [Card('3', 'spades'), Card('4', 'spades'), Card('5', 'hearts'), Card('7', 'spades')]
+        self.assertEqual(Rules.possible_moves(cards33, cards34),
+                         [[Card('3', 'spades'), Card('4', 'spades'), Card('5', 'hearts')]])
+        cards35 = [Card('3', 'spades'), Card('4', 'spades'), Card('5', 'spades')]
+        cards36 = [Card('3', 'spades'), Card('4', 'spades'), Card('5', 'hearts'), Card('7', 'spades'),
+                   Card('8', 'spades'), Card('9', 'spades')]
+        self.assertEqual(Rules.possible_moves(cards35, cards36),
+                         [[Card('3', 'spades'), Card('4', 'spades'), Card('5', 'hearts')],
+                          [Card('7', 'spades'), Card('8', 'spades'), Card('9', 'spades')]])
+        cards37 = [Card('3', 'spades'), Card('4', 'spades'), Card('5', 'spades')]
+        cards38 = []
+        self.assertEqual(Rules.possible_moves(cards37, cards38), [])
+
 
 if __name__ == '__main__':
     unittest.main()
