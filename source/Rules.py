@@ -30,7 +30,7 @@ def straight(cards):
 
 def double_straight(cards):
     """Returns true if cards contains 3 or more pairs, with each pair being one rank higher than the previous."""
-    if len(cards) % 2 == 1 or len(cards) < 6 or len(cards) > 24:
+    if len(cards) % 2 == 1 or len(cards) < 6 or len(cards) > 12:
         return False
     cards_copy = sorted(cards, key=Card.hearts_high)
 
@@ -137,7 +137,6 @@ def _find_straights(cards1, cards2):
     cards2_copy = [card for card in cards2 if card.rank != '2']
     # List of lists of cards. Every inner list is a subset of cards2 that can beat cards1.
     moves = []
-    straight_cards = []
 
     # List of lists of cards. One inner list contains a subset of cards from cards2_copy, all with the same rank.
     cards2_ranks = []
@@ -164,6 +163,7 @@ def _find_straights(cards1, cards2):
     if (len(cards2_ranks) < len(cards1)) or (len(cards2_ranks) == len(cards1) and cards2_ranks[-1][0].rank == '2'):
         return []
 
+    straight_cards = []
     # Find cards that can make straights.
     for i in range(len(cards2_ranks)):
         # There are not enough remaining cards to make a straight.
@@ -217,6 +217,97 @@ def _straight_combinations(cards):
                 temp.append([card] + combination)
         return temp
 
+def _find_double_straights(cards1, cards2):
+    """Returns a lists of lists where each inner list is a double straight that can beat cards1.
+    cards1: a sorted list of cards which make up a double straight.
+    cards2: a sorted list of cards (a player's hand).
+    """
+
+    ranks = [str(n) for n in range(3, 11)] + list('JQKA')
+    cards2_copy = [card for card in cards2 if card.rank != '2']
+    # List of lists of cards. Every inner list is a subset of cards2 that can beat cards1.
+    moves = []
+
+    # List of lists of cards. One inner list contains a subset of cards from cards2_copy, all with the same rank.
+    cards2_ranks = []
+    # Temporary list that contains cards which all have the same rank.
+    same_ranks = []
+    current_rank = cards2_copy[0].rank
+    # Separate unique ranks into their own lists.
+    for card in cards2_copy:
+        # card has same rank as current_rank, append to same_ranks
+        if card.rank == current_rank:
+            same_ranks.append(card)
+        # card has different rank than current_rank
+        else:
+            # Append list of cards with previous rank to cards2_ranks.
+            cards2_ranks.append(same_ranks)
+            # Update current_rank
+            current_rank = card.rank
+            same_ranks = [card]
+            # Last card in cards2_copy.
+        if card == cards2_copy[-1]:
+            cards2_ranks.append(same_ranks)
+
+    # Filter out lists whose lengths are less than 2. These are cards in the hand that do not share a common rank
+    #  with any other card in the hand.
+    cards2_ranks = list(filter(lambda x: len(x) > 1, cards2_ranks))
+
+    straight_cards = []
+    # Find cards that can make double straights.
+    for i in range(len(cards2_ranks)):
+        # There are not enough remaining cards to make a double straight.
+        if (len(cards2_ranks) - i) < len(cards1)/2:
+            break
+
+        # Lowest rank of straight must be equal to or greater than lowest rank of cards1
+        if ranks.index(cards2_ranks[i][0].rank) < ranks.index(cards1[0].rank):
+            continue
+
+        # Pairs that can beat the last pair of cards1.
+        temp_ranks = []
+        # Next len(cards1)/2 ranks make up a double straight.
+        if straight([cards[0] for cards in cards2_ranks[i:i + len(cards1)//2]]):
+            # First len(cards1)/2-1 ranks always belong to the double straight.
+            temp_straight = cards2_ranks[i:i + (len(cards1)//2 - 1)]
+            # Last card of cards1 has same rank as the last card of the cards2 straight. Suits must be compared.
+            if temp_straight[0][0].rank == cards1[0].rank:
+                # len(cards1) element of cards2_ranks has to have greater suit+rank than the last card of cards1.
+                for j in range(0, len(cards2_ranks[i+len(cards1)//2-1])-1):
+                    for k in range(j + 1, len(cards2_ranks[i+len(cards1)//2-1])):
+                        if cards2_ranks[i+len(cards1)//2-1][k].hearts_high() > cards1[-1].hearts_high():
+                            temp_ranks.append([cards2_ranks[i+len(cards1)//2-1][j], cards2_ranks[i+len(cards1)//2-1][k]])
+                # Last cards of straight are greater than or equal to last card of cards1
+                if temp_ranks:
+                    for temp_rank in temp_ranks:
+                        straight_cards.append(temp_straight[:] + [temp_rank])
+            # Last cards of straight are greater than or equal to last card of cards1
+            else:
+                temp_straight.append(cards2_ranks[i + len(cards1)//2 - 1])
+                straight_cards.append(temp_straight)
+
+    for ds in straight_cards:
+        moves.extend(_double_straight_combinations(ds))
+
+    return moves
+
+def _double_straight_combinations(cards):
+    """Returns a list of lists. Each inner list is a double straight. The length of each list is 2 times the number
+    of unique ranks in cards.
+
+    cards: a list of lists. Each inner list contains Cards which all have the same rank. Each succeeding list
+    contains cards that are one rank higher than the previous list."""
+
+    temp = []
+    if not cards:
+        return [[]]
+    else:
+        for combination in _double_straight_combinations(cards[1:]):
+            for card1 in range(0, len(cards[0])-1):
+                for card2 in range(card1 + 1, len(cards[0])):
+                    temp.append([cards[0][card1], cards[0][card2]] + combination)
+        return temp
+
 
 def possible_moves(cards1, cards2):
     """Returns a list of possible moves of cards2 hand that can beat cards1.
@@ -238,8 +329,7 @@ def possible_moves(cards1, cards2):
         moves = _find_quads(cards1, cards2)
     elif straight(cards1):
         moves = _find_straights(cards1, cards2)
-    elif double-straight(cards1):
-        pass
+    elif double_straight(cards1):
+        moves = _find_double_straights(cards1, cards2)
 
     return moves
-
