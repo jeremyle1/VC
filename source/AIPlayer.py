@@ -72,6 +72,7 @@ class AIPlayer(Player):
             game.last_time = pygame.time.get_ticks()
 
             game.active_player = (game.active_player + 1) % 4
+            # Skip players with empty hands.
             while len(game.players[game.active_player].hand) == 0:
                 game.active_player = (game.active_player + 1) % 4
                 print(game.active_player)

@@ -11,7 +11,9 @@ def main():
     while playAgain:
         game = Game(screen)
         while not game.gameOver:
+            # Loop through game events and take necessary actions.
             gf.check_events(game)
+            # Simulate moves of AI players.
             game.next_move()
             gf.update_screen(game, screen, game.players)
             pygame.display.flip()

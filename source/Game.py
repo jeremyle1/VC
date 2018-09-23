@@ -17,6 +17,7 @@ class Game:
         self.skipped_players = {i : (False, []) for i in range(4)}
         self.gameOver = False
         self.playAgain = True
+        # Time of the latest move.
         self.last_time = pygame.time.get_ticks()
 
         self.previous_move = []
@@ -51,6 +52,7 @@ class Game:
             pygame.draw.circle(self.screen, Game.marker_color, (20, 130), 10, 10)
 
     def blit_buttons(self):
+        """Draws the play and skip buttons."""
         if self.active_player == 0:
             self.play_button.blit_font()
             self.skip_button.blit_font()

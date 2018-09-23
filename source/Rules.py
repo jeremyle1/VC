@@ -209,9 +209,11 @@ def _straight_combinations(cards):
             e.g. [[3,3], [4,4], [5], [6, 6]]"""
 
     temp = []
+    # Base case.
     if not cards:
         return [[]]
     else:
+        # Append each card in card[0] to the combinations of cards[1:].
         for card in cards[0]:
             for combination in _straight_combinations(cards[1:]):
                 temp.append([card] + combination)
@@ -299,12 +301,16 @@ def _double_straight_combinations(cards):
     contains cards that are one rank higher than the previous list."""
 
     temp = []
+    # Base case.
     if not cards:
         return [[]]
     else:
+        # Recursively find combinations of cards.
         for combination in _double_straight_combinations(cards[1:]):
+            # Find pair combinations of cards[0].
             for card1 in range(0, len(cards[0])-1):
                 for card2 in range(card1 + 1, len(cards[0])):
+                    # Append pair combination to recursively found combinations.
                     temp.append([cards[0][card1], cards[0][card2]] + combination)
         return temp
 
@@ -317,6 +323,7 @@ def possible_moves(cards1, cards2):
     cards1 = sorted(cards1, key=Card.hearts_high)
     cards2 = sorted(cards2, key=Card.hearts_high)
     moves = []
+
     if len(cards1) == 1:
         for card in cards2:
             if card.hearts_high() > cards1[0].hearts_high():
