@@ -1,5 +1,6 @@
 import pygame
 from source.Player import Player
+import source.Rules as Rules
 
 class HumanPlayer(Player):
     def __init__(self, name, position, deck):
@@ -41,7 +42,7 @@ class HumanPlayer(Player):
     def play_btn_clicked(self, game):
         # Mouse should be over the play button at the time of click.
         # Active player should be human. Move should be valid.
-        if game.play_button.hovered() and game.active_player == 0 and self.validate_move():
+        if game.play_button.hovered() and game.active_player == 0 and self.validate_move(game.last_move):
             move = self.get_selected_cards()
             game.moves.append(move)
             for card in move:
@@ -68,9 +69,17 @@ class HumanPlayer(Player):
                 game.current_move = move
 
     # TODO: implement this method
-    def validate_move(self):
-        """Returns True if the selected cards make up a valid move."""
-        return True
+    def validate_move(self, last_move):
+        """Returns True if the selected cards can beat the current hand."""
+        cards = self.get_selected_cards()
+        # Return True if selected cards can beat the last move, False otherwise.
+        if last_move:
+            return Rules.beats(last_move, self.get_selected_cards())
+        # First move of the game. Return True if the selected cards make up a valid move.
+        else:
+            return (len(cards) == 1 or Rules.double(cards) or Rules.triple(cards) or Rules.quad(cards) or
+                    Rules.straight(cards) or Rules.double_straight(cards)) and\
+                   (cards[0].rank == '3' and cards[0].suit == 'spades')
 
     def get_selected_cards(self):
         """"Returns a list of the selected cards."""

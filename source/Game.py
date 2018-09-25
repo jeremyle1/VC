@@ -20,8 +20,11 @@ class Game:
         # Time of the latest move.
         self.last_time = pygame.time.get_ticks()
 
+        # Second to last move that was played.
         self.previous_move = []
+        # The last move that was played.
         self.last_move = []
+        # Current temporary move used to update last_move.
         self.current_move = []
 
         self.play_button = Button('PLAY', (100, 50), (1050, 750))
@@ -126,7 +129,7 @@ class Game:
                 # # Add move to self.moves. Remove card from player's hand.
             # Increment self.active_player
         temp_move = self.players[self.active_player].make_move(self, self.last_time)
-        if temp_move is not None:
+        if temp_move:
             self.current_move = temp_move
 
         # First move of game.
