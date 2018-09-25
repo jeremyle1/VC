@@ -30,7 +30,7 @@ def straight(cards):
 
 def double_straight(cards):
     """Returns true if cards contains 3 or more pairs, with each pair being one rank higher than the previous."""
-    if len(cards) % 2 == 1 or len(cards) < 6 or len(cards) > 12:
+    if len(cards) % 2 == 1 or len(cards) < 6:
         return False
     cards_copy = sorted(cards, key=Card.hearts_high)
 
@@ -77,22 +77,40 @@ def beats(cards1, cards2):
 
     return False
 
+def _find_singles(cards1, cards2):
+    moves = [[card] for card in cards2 if card.hearts_high() > cards1[0].hearts_high()]
+    # If cards1 is a 2,
+    # Find all double straights in cards2 that have 3 pairs. Any 3 pair double straight can beat any single 2.
+    if cards1[0].rank == '2':
+        dbl_straight = [Card('3', 'spades') for _ in range(6)]
+        for move in _find_double_straights(dbl_straight, cards2):
+            moves.append(move)
+
+    return moves
+
 def _find_doubles(cards1, cards2):
     """Find doubles in cards2 that can beat cards1.
-    cards1: a list containing a pair of cards with the same rank.
-    cards2: a list of cards."""
+    cards1: a sorted list containing a pair of cards with the same rank.
+    cards2: a sorted list of cards."""
     moves = []
     for i in range(0, len(cards2) - 1):
         for j in range(i + 1, len(cards2)):
             if beats(cards1, [cards2[i], cards2[j]]):
                 moves.append([cards2[i], cards2[j]])
 
+    # If cards1 has a 2,
+    # Find all double straights in cards2 that have 4 pairs. Any 4 pair double straight can beat any pair of 2's.
+    if cards1[0].rank == '2':
+        dbl_straight = [Card('3', 'spades') for _ in range(8)]
+        for move in _find_double_straights(dbl_straight, cards2):
+            moves.append(move)
+
     return moves
 
 def _find_triples(cards1, cards2):
     """Find doubles in cards2 that can beat cards1.
-        cards1: a list containing three cards with the same rank.
-        cards2: a list of cards."""
+        cards1: a sorted list containing three cards with the same rank.
+        cards2: a sorted list of cards."""
     moves = []
     for i in range(0, len(cards2) - 2):
         for j in range(i + 1, len(cards2)-1):
@@ -100,12 +118,19 @@ def _find_triples(cards1, cards2):
                 if beats(cards1, [cards2[i], cards2[j], cards2[k]]):
                     moves.append([cards2[i], cards2[j], cards2[k]])
 
+    # If cards1 has a 2,
+    # Find all double straights in cards2 that have 5 pairs. Any 5 pair double straight can beat any triple of 2's.
+    if cards1[0].rank == '2':
+        dbl_straight = [Card('3', 'spades') for _ in range(10)]
+        for move in _find_double_straights(dbl_straight, cards2):
+            moves.append(move)
+
     return moves
 
 def _find_quads(cards1, cards2):
     """Find quads in cards2 that can beat cards1.
-    cards1: a list containing a four of a kind.
-    cards2: a list of cards."""
+    cards1: a sorted list containing a four of a kind.
+    cards2: a sorted list of cards."""
 
     # Quads must be in a hand of at least 4 cards.
     if len(cards2) < 4:
@@ -135,6 +160,7 @@ def _find_straights(cards1, cards2):
 
     ranks = [str(n) for n in range(3, 11)] + list('JQKA')
     cards2_copy = [card for card in cards2 if card.rank != '2']
+
     # List of lists of cards. Every inner list is a subset of cards2 that can beat cards1.
     moves = []
 
@@ -225,8 +251,12 @@ def _find_double_straights(cards1, cards2):
     cards2: a sorted list of cards (a player's hand).
     """
 
+    if len(cards2) < len(cards1):
+        return []
+
     ranks = [str(n) for n in range(3, 11)] + list('JQKA')
     cards2_copy = [card for card in cards2 if card.rank != '2']
+
     # List of lists of cards. Every inner list is a subset of cards2 that can beat cards1.
     moves = []
 
@@ -325,9 +355,7 @@ def possible_moves(cards1, cards2):
     moves = []
 
     if len(cards1) == 1:
-        for card in cards2:
-            if card.hearts_high() > cards1[0].hearts_high():
-                moves.append(card)
+        moves = _find_singles(cards1, cards2)
     elif double(cards1):
         moves = _find_doubles(cards1, cards2)
     elif triple(cards1):
