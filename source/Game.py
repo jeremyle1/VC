@@ -3,6 +3,7 @@ from source.Deck import Deck
 from source.AIPlayer import AIPlayer
 from source.HumanPlayer import HumanPlayer
 from source.Button import Button
+import source.Rules as Rules
 
 class Game:
     marker_color = (50, 255, 0)
@@ -12,7 +13,9 @@ class Game:
         self.players = []
         # Player that played two moves ago.
         self.last_player = None
+        self.active_player = None
         self.__init_players()
+
         # All moves of the game => (Player.position, (Cards))
         self.moves = []
         # Players that are being skipped.
@@ -59,6 +62,7 @@ class Game:
 
     def blit_buttons(self):
         """Draws the play and skip buttons."""
+        # TODO: Blit buttons only when possible.
         if self.active_player == 0:
             self.play_button.blit_font()
             self.skip_button.blit_font()
@@ -106,9 +110,29 @@ class Game:
         # There is a previous move but the current move is a skip.
         # elif self.last_move and not self.current_move:
 
+    def num_of_non_empty_hands(self):
+        num_of_hands = 0
+        for player in self.players:
+            if player.hand:
+                num_of_hands = num_of_hands + 1
+        return num_of_hands
 
+    def next_player(self):
+        """Finds the next active player by skipping anyone with empty hands or those in the skipped_players list."""
+        self.active_player = (self.active_player + 1) % 4
+        while len(self.players[self.active_player].hand) == 0 or self.active_player in self.skipped_players:
+            self.active_player = (self.active_player + 1) % 4
 
+    def reset_skipped_players(self):
+        """Checks if skipped players list should be reset, and does so if necessary."""
+        # Number of non-empty hands minus one.
+        max_skipped = self.num_of_non_empty_hands() - 1
 
+        if (len(self.skipped_players) == max_skipped and Rules.move_type(self.last_move) !=
+                Rules.move_type(self.current_move)) or (len(self.skipped_players) == max_skipped and
+                (Rules.move_type(self.last_move) == Rules.move_type(self.current_move)) and not
+                Rules.beats(self.last_move, self.current_move)) or (len(self.players[self.active_player].hand) == 0):
+            self.skipped_players = []
 
     def next_move(self):
         if self.active_player == 0:
@@ -132,8 +156,8 @@ class Game:
                 # # Add move to self.moves. Remove card from player's hand.
             # Increment self.active_player
         temp_move = self.players[self.active_player].make_move(self, self.last_time)
-        if temp_move:
-            self.current_move = temp_move
+        # if temp_move:
+        #     self.current_move = temp_move
 
         # First move of game.
         # if not self.previous_move and self.current_move:

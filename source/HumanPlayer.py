@@ -36,15 +36,12 @@ class HumanPlayer(Player):
         if game.skip_button.hovered() and game.active_player == 0 and game.last_player != self.position:
             game.last_time = pygame.time.get_ticks()
             game.skipped_players.append(self.position)
-            game.active_player = (game.active_player + 1) % 4
-            while len(game.players[game.active_player].hand) == 0 or game.active_player in game.skipped_players:
-                game.active_player = (game.active_player + 1) % 4
+            game.next_player()
 
     def play_btn_clicked(self, game):
         # Mouse should be over the play button at the time of click.
         # Active player should be human. Move should be valid.
-        if game.play_button.hovered() and game.active_player == 0 and self.validate_move(game.last_move,
-                                                                                         game.skipped_players):
+        if game.play_button.hovered() and game.active_player == 0 and self.validate_move(game):
             move = self.get_selected_cards()
             game.moves.append(move)
             for card in move:
@@ -64,30 +61,22 @@ class HumanPlayer(Player):
             if move:
                 game.current_move = move
 
-            # New round. Reset skipped players.
-            if (len(game.skipped_players) == 3 and Rules.move_type(game.last_move) != Rules.move_type(game.current_move)) \
-                    or (len(game.skipped_players) == 3 and (Rules.move_type(game.last_move) == Rules.move_type(move))
-                        and not Rules.beats(game.last_move, move)) or (len(self.hand) == 0):
-                game.skipped_players = []
-
+            # Checks if skipped players list should be reset, and does so if necessary.
+            game.reset_skipped_players()
+            # This player just made the last move.
             game.last_player = self.position
             # Find next player turn.
-            game.active_player = (game.active_player + 1) % 4
-            while len(game.players[game.active_player].hand) == 0 or game.active_player in game.skipped_players:
-                game.active_player = (game.active_player + 1) % 4
+            game.next_player()
 
-
-
-
-    # TODO: implement this method
-    def validate_move(self, last_move, skipped):
+    def validate_move(self, game):
         """Returns True if the selected cards can beat the current hand."""
         cards = self.get_selected_cards()
+        max_skipped = game.num_of_non_empty_hands() - 1
         # Return True if selected cards can beat the last move, False otherwise.
-        if last_move and len(skipped) < 3:
-            return Rules.beats(last_move, self.get_selected_cards())
+        if game.last_move and len(game.skipped_players) < max_skipped:
+            return Rules.beats(game.last_move, self.get_selected_cards())
         # Other 3 players have skipped their turns, so any valid move can now be played.
-        elif last_move and len(skipped) == 3:
+        elif game.last_move and len(game.skipped_players) == max_skipped:
             return (len(cards) == 1 or Rules.double(cards) or Rules.triple(cards) or Rules.quad(cards) or
                     Rules.straight(cards) or Rules.double_straight(cards))
         # First move of the game. Return True if the selected cards make up a valid move.

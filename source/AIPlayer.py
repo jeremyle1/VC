@@ -52,8 +52,9 @@ class AIPlayer(Player):
         if not game.last_move:
             return [self.hand[0]]
 
+        max_skipped = game.num_of_non_empty_hands() - 1
         try:
-            if len(game.skipped_players) == 3:
+            if len(game.skipped_players) == max_skipped:
                 move = random.choice(Rules.all_move_combinations(self.hand))
             else:
                 move = random.choice(Rules.possible_moves(game.last_move, self.hand))
@@ -73,17 +74,15 @@ class AIPlayer(Player):
             if not move:
                 game.last_time = pygame.time.get_ticks()
                 game.skipped_players.append(self.position)
-                game.active_player = (game.active_player + 1) % 4
-                # Skip players with empty hands.
-                while len(game.players[game.active_player].hand) == 0 or game.active_player in game.skipped_players:
-                    game.active_player = (game.active_player + 1) % 4
-
+                game.next_player()
                 return move
 
             game.moves.append(move)
             # Cards played during this turn are no longer in the hand.
             for card in move:
                 self.hand.remove(card)
+
+            game.current_move = move
 
             # Game ends after three players have empty hands.
             empty_hands = 0
@@ -97,16 +96,12 @@ class AIPlayer(Player):
             # Update time for the next player.
             game.last_time = pygame.time.get_ticks()
 
-            # New round. Reset skipped players.
-            if (len(game.skipped_players) == 3 and Rules.move_type(game.last_move) != Rules.move_type(move)) \
-                    or (len(game.skipped_players) == 3 and (Rules.move_type(game.last_move) == Rules.move_type(move))
-                        and not Rules.beats(game.last_move, move)) or (len(self.hand) == 0):
-                game.skipped_players = []
 
+            # Checks if skipped players list should be reset, and does so if necessary.
+            game.reset_skipped_players()
+            # This player just made the last move.
             game.last_player = self.position
-            game.active_player = (game.active_player + 1) % 4
-            # Skip players with empty hands.
-            while len(game.players[game.active_player].hand) == 0 or game.active_player in game.skipped_players:
-                game.active_player = (game.active_player + 1) % 4
+            # Finds next player turn.
+            game.next_player()
 
             return move
