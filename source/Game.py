@@ -118,7 +118,7 @@ class Game:
         return num_of_hands
 
     def next_player(self):
-        """Finds the next active player by skipping anyone with empty hands or those in the skipped_players list."""
+        """Finds the next active player."""
         self.active_player = (self.active_player + 1) % 4
         while len(self.players[self.active_player].hand) == 0 or self.active_player in self.skipped_players:
             self.active_player = (self.active_player + 1) % 4
@@ -128,10 +128,11 @@ class Game:
         # Number of non-empty hands minus one.
         max_skipped = self.num_of_non_empty_hands() - 1
 
-        if (len(self.skipped_players) == max_skipped and Rules.move_type(self.last_move) !=
-                Rules.move_type(self.current_move)) or (len(self.skipped_players) == max_skipped and
-                (Rules.move_type(self.last_move) == Rules.move_type(self.current_move)) and not
-                Rules.beats(self.last_move, self.current_move)) or (len(self.players[self.active_player].hand) == 0):
+        # All but active player has skipped, and he plays a hand that cannot beat the previous hand, OR active player
+        # runs out of cards, OR every player has skipped and the active player is the first to re-start.
+        if (len(self.skipped_players) == max_skipped and not
+                Rules.beats(self.last_move, self.current_move)) or (len(self.players[self.active_player].hand) == 0)\
+                or (len(self.skipped_players) > max_skipped):
             self.skipped_players = []
 
     def next_move(self):

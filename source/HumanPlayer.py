@@ -36,7 +36,13 @@ class HumanPlayer(Player):
         if game.skip_button.hovered() and game.active_player == 0 and game.last_player != self.position:
             game.last_time = pygame.time.get_ticks()
             game.skipped_players.append(self.position)
-            game.next_player()
+            # No player can beat the current hand.
+            if len(game.skipped_players) > game.num_of_non_empty_hands() - 1:
+                game.active_player = (game.active_player + 1) % 4
+                while len(game.players[game.active_player].hand) == 0:
+                    game.active_player = (game.active_player + 1) % 4
+            else:
+                game.next_player()
 
     def play_btn_clicked(self, game):
         # Mouse should be over the play button at the time of click.
@@ -75,8 +81,12 @@ class HumanPlayer(Player):
         # Return True if selected cards can beat the last move, False otherwise.
         if game.last_move and len(game.skipped_players) < max_skipped:
             return Rules.beats(game.last_move, self.get_selected_cards())
-        # Other 3 players have skipped their turns, so any valid move can now be played.
-        elif game.last_move and len(game.skipped_players) == max_skipped:
+        # Other players have skipped their turns, so any valid move can now be played.
+        elif game.last_move and len(game.skipped_players) == max_skipped and game.last_player == self.position:
+            return (len(cards) == 1 or Rules.double(cards) or Rules.triple(cards) or Rules.quad(cards) or
+                    Rules.straight(cards) or Rules.double_straight(cards))
+        # No player can beat the current hand. Next move can be anything.
+        elif len(game.skipped_players) > max_skipped:
             return (len(cards) == 1 or Rules.double(cards) or Rules.triple(cards) or Rules.quad(cards) or
                     Rules.straight(cards) or Rules.double_straight(cards))
         # First move of the game. Return True if the selected cards make up a valid move.
