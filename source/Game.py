@@ -10,11 +10,13 @@ class Game:
         self.deck = Deck()
         self.screen = screen
         self.players = []
+        # Player that played two moves ago.
+        self.last_player = None
         self.__init_players()
         # All moves of the game => (Player.position, (Cards))
         self.moves = []
         # Players that are being skipped.
-        self.skipped_players = {i : (False, []) for i in range(4)}
+        self.skipped_players = []
         self.gameOver = False
         self.playAgain = True
         # Time of the latest move.
@@ -41,6 +43,7 @@ class Game:
         for player in self.players:
             if player.has_3_spades():
                 self.active_player = player.position
+                self.last_player = player.position
                 break
 
     def blit_active_player(self):

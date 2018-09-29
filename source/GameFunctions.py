@@ -8,7 +8,6 @@ def check_events(game):
             sys.exit()
         # Mouse click event.
         elif event.type == pygame.MOUSEBUTTONUP:
-            print(pygame.mouse.get_pos())
             # Pops the card up from the hand when clicked.
             game.players[0].check_card_clicked()
             # Check if skip button was clicked.

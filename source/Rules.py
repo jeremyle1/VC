@@ -1,17 +1,32 @@
 from source.Card import Card
+from enum import Enum
 import os
+from itertools import combinations
+
+
+class Move(Enum):
+    SINGLE = 0
+    DOUBLE = 1
+    TRIPLE = 2
+    QUAD = 4
+    STRAIGHT = 5
+    DBL_STRAIGHT = 6
+
 
 def double(cards):
     """Returns true if length of cards is 2 and both have the same rank."""
     return len(cards) == 2 and all(card.rank == cards[0].rank for card in cards)
 
+
 def triple(cards):
     """Returns true if length of cards is 3 and all have the same rank."""
     return len(cards) == 3 and all(card.rank == cards[0].rank for card in cards)
 
+
 def quad(cards):
     """Returns true if length of cards is 4 and all have the same rank."""
     return len(cards) == 4 and all(card.rank == cards[0].rank for card in cards)
+
 
 def straight(cards):
     """Returns true if length of cards is from 3 to 12, and each card is one rank higher than the previous."""
@@ -28,6 +43,7 @@ def straight(cards):
     except ValueError:
         return False
 
+
 def double_straight(cards):
     """Returns true if cards contains 3 or more pairs, with each pair being one rank higher than the previous."""
     if len(cards) % 2 == 1 or len(cards) < 6:
@@ -41,6 +57,7 @@ def double_straight(cards):
 
     # Return True if the ranks of the doubles make a straight.
     return straight(cards_copy[::2])
+
 
 def beats(cards1, cards2):
     """Returns true if cards2 can beat cards1.
@@ -77,6 +94,7 @@ def beats(cards1, cards2):
 
     return False
 
+
 def _find_singles(cards1, cards2):
     moves = [[card] for card in cards2 if card.hearts_high() > cards1[0].hearts_high()]
     # If cards1 is a 2,
@@ -87,6 +105,7 @@ def _find_singles(cards1, cards2):
             moves.append(move)
 
     return moves
+
 
 def _find_doubles(cards1, cards2):
     """Find doubles in cards2 that can beat cards1.
@@ -107,6 +126,7 @@ def _find_doubles(cards1, cards2):
 
     return moves
 
+
 def _find_triples(cards1, cards2):
     """Find doubles in cards2 that can beat cards1.
         cards1: a sorted list containing three cards with the same rank.
@@ -126,6 +146,7 @@ def _find_triples(cards1, cards2):
             moves.append(move)
 
     return moves
+
 
 def _find_quads(cards1, cards2):
     """Find quads in cards2 that can beat cards1.
@@ -149,6 +170,7 @@ def _find_quads(cards1, cards2):
             i = i + 1
 
     return moves
+
 
 def _find_straights(cards1, cards2):
     """Find straights in cards2 that can beat cards1.
@@ -226,6 +248,7 @@ def _find_straights(cards1, cards2):
 
     return moves
 
+
 def _straight_combinations(cards):
     """Returns a list of lists where each list contains Cards that make a straight. The length of each straight
         is the number of unique ranks in cards.
@@ -244,6 +267,7 @@ def _straight_combinations(cards):
             for combination in _straight_combinations(cards[1:]):
                 temp.append([card] + combination)
         return temp
+
 
 def _find_double_straights(cards1, cards2):
     """Returns a lists of lists where each inner list is a double straight that can beat cards1.
@@ -323,6 +347,7 @@ def _find_double_straights(cards1, cards2):
 
     return moves
 
+
 def _double_straight_combinations(cards):
     """Returns a list of lists. Each inner list is a double straight. The length of each list is 2 times the number
     of unique ranks in cards.
@@ -343,6 +368,27 @@ def _double_straight_combinations(cards):
                     # Append pair combination to recursively found combinations.
                     temp.append([cards[0][card1], cards[0][card2]] + combination)
         return temp
+
+
+def move_type(cards):
+    """Returns an enumerated type, Move, corresponding to the list of cards given.
+    cards: a list of Cards
+    """
+
+    if len(cards) == 1:
+        return Move.SINGLE
+    elif double(cards):
+        return Move.DOUBLE
+    elif triple(cards):
+        return Move.TRIPLE
+    elif quad(cards):
+        return Move.QUAD
+    elif straight(cards):
+        return Move.STRAIGHT
+    elif double_straight(cards):
+        return Move.DBL_STRAIGHT
+    else:
+        return None
 
 
 def possible_moves(cards1, cards2):
@@ -366,5 +412,18 @@ def possible_moves(cards1, cards2):
         moves = _find_straights(cards1, cards2)
     elif double_straight(cards1):
         moves = _find_double_straights(cards1, cards2)
+
+    return moves
+
+
+def all_move_combinations(cards):
+    """Returns a list of all valid moves of cards.
+    cards: a list of Cards.
+    """
+    moves = []
+    for i in range(1, len(cards)+1):
+        for move in combinations(cards, i):
+            if len(move) == 1 or double(move) or triple(move) or quad(cards) or straight(move) or double_straight(move):
+                moves.append(list(move))
 
     return moves

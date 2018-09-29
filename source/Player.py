@@ -7,7 +7,7 @@ class Player:
         self.deck = deck
         self.hand = sorted(deck.deal_hand(), key=Card.hearts_high)
         # milliseconds to pause when AI's turn.
-        self.thinking_time = 500
+        self.thinking_time = 2200
 
     def printCards(self):
         for card in self.hand:

@@ -25,8 +25,6 @@ class HumanPlayer(Player):
         """Checks if mouse position overlaps with a card's rect and toggles the card accordingly."""
         clicked_card = -1
         for card in self.hand:
-            # print('Mouse position:', pygame.mouse.get_pos())
-            # print('Rect Position:', card.rect)
             if card.rect.collidepoint(pygame.mouse.get_pos()):
                 # Last card that mouse position collides with.
                 clicked_card = self.hand.index(card)
@@ -35,14 +33,18 @@ class HumanPlayer(Player):
             self.hand[clicked_card].toggle_selected()
 
     def skip_btn_clicked(self, game):
-        if game.skip_button.hovered() and game.active_player == 0:
+        if game.skip_button.hovered() and game.active_player == 0 and game.last_player != self.position:
             game.last_time = pygame.time.get_ticks()
+            game.skipped_players.append(self.position)
             game.active_player = (game.active_player + 1) % 4
+            while len(game.players[game.active_player].hand) == 0 or game.active_player in game.skipped_players:
+                game.active_player = (game.active_player + 1) % 4
 
     def play_btn_clicked(self, game):
         # Mouse should be over the play button at the time of click.
         # Active player should be human. Move should be valid.
-        if game.play_button.hovered() and game.active_player == 0 and self.validate_move(game.last_move):
+        if game.play_button.hovered() and game.active_player == 0 and self.validate_move(game.last_move,
+                                                                                         game.skipped_players):
             move = self.get_selected_cards()
             game.moves.append(move)
             for card in move:
@@ -59,22 +61,35 @@ class HumanPlayer(Player):
 
             game.last_time = pygame.time.get_ticks()
 
-            # Find next player turn.
-            game.active_player = (game.active_player + 1) % 4
-            while len(game.players[game.active_player].hand) == 0:
-                print(game.active_player)
-                game.active_player = (game.active_player + 1) % 4
-
             if move:
                 game.current_move = move
 
+            # New round. Reset skipped players.
+            if (len(game.skipped_players) == 3 and Rules.move_type(game.last_move) != Rules.move_type(game.current_move)) \
+                    or (len(game.skipped_players) == 3 and (Rules.move_type(game.last_move) == Rules.move_type(move))
+                        and not Rules.beats(game.last_move, move)) or (len(self.hand) == 0):
+                game.skipped_players = []
+
+            game.last_player = self.position
+            # Find next player turn.
+            game.active_player = (game.active_player + 1) % 4
+            while len(game.players[game.active_player].hand) == 0 or game.active_player in game.skipped_players:
+                game.active_player = (game.active_player + 1) % 4
+
+
+
+
     # TODO: implement this method
-    def validate_move(self, last_move):
+    def validate_move(self, last_move, skipped):
         """Returns True if the selected cards can beat the current hand."""
         cards = self.get_selected_cards()
         # Return True if selected cards can beat the last move, False otherwise.
-        if last_move:
+        if last_move and len(skipped) < 3:
             return Rules.beats(last_move, self.get_selected_cards())
+        # Other 3 players have skipped their turns, so any valid move can now be played.
+        elif last_move and len(skipped) == 3:
+            return (len(cards) == 1 or Rules.double(cards) or Rules.triple(cards) or Rules.quad(cards) or
+                    Rules.straight(cards) or Rules.double_straight(cards))
         # First move of the game. Return True if the selected cards make up a valid move.
         else:
             return (len(cards) == 1 or Rules.double(cards) or Rules.triple(cards) or Rules.quad(cards) or

@@ -1,6 +1,7 @@
 import pygame
-import os
+import os, random
 from source.Player import Player
+import source.Rules as Rules
 
 class AIPlayer(Player):
     def __init__(self, name, position, deck):
@@ -44,16 +45,41 @@ class AIPlayer(Player):
             elif self.position == 3:
                 self.card_backs[i] = pygame.transform.rotate(self.card_backs[i], 90)
 
-    def find_best_move(self):
+    def find_best_move(self, game):
         """Returns a list of cards that should be the best move to take. Returns empty list to skip turn."""
-        move = [self.hand[0]]
+        move = []
+
+        if not game.last_move:
+            return [self.hand[0]]
+
+        try:
+            if len(game.skipped_players) == 3:
+                move = random.choice(Rules.all_move_combinations(self.hand))
+            else:
+                move = random.choice(Rules.possible_moves(game.last_move, self.hand))
+        except:
+            return []
+
         return move
 
     def make_move(self, game, last_time):
         """Process the player's turn."""
         # Pause for a short period of time before making the move.
         if pygame.time.get_ticks() - last_time > self.thinking_time:
-            move = self.find_best_move()
+
+            move = self.find_best_move(game)
+
+            # Move is empty. Skip this player.
+            if not move:
+                game.last_time = pygame.time.get_ticks()
+                game.skipped_players.append(self.position)
+                game.active_player = (game.active_player + 1) % 4
+                # Skip players with empty hands.
+                while len(game.players[game.active_player].hand) == 0 or game.active_player in game.skipped_players:
+                    game.active_player = (game.active_player + 1) % 4
+
+                return move
+
             game.moves.append(move)
             # Cards played during this turn are no longer in the hand.
             for card in move:
@@ -71,10 +97,16 @@ class AIPlayer(Player):
             # Update time for the next player.
             game.last_time = pygame.time.get_ticks()
 
+            # New round. Reset skipped players.
+            if (len(game.skipped_players) == 3 and Rules.move_type(game.last_move) != Rules.move_type(move)) \
+                    or (len(game.skipped_players) == 3 and (Rules.move_type(game.last_move) == Rules.move_type(move))
+                        and not Rules.beats(game.last_move, move)) or (len(self.hand) == 0):
+                game.skipped_players = []
+
+            game.last_player = self.position
             game.active_player = (game.active_player + 1) % 4
             # Skip players with empty hands.
-            while len(game.players[game.active_player].hand) == 0:
+            while len(game.players[game.active_player].hand) == 0 or game.active_player in game.skipped_players:
                 game.active_player = (game.active_player + 1) % 4
-                print(game.active_player)
 
             return move
