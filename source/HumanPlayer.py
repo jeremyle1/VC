@@ -53,6 +53,9 @@ class HumanPlayer(Player):
             for card in move:
                 self.hand.remove(card)
 
+            if move:
+                game.current_move = move
+
         # Game ends after three players have empty hands.
             empty_hands = 0
             for player in game.players:
@@ -63,9 +66,6 @@ class HumanPlayer(Player):
                 return
 
             game.last_time = pygame.time.get_ticks()
-
-            if move:
-                game.current_move = move
 
             # Checks if skipped players list should be reset, and does so if necessary.
             game.reset_skipped_players()

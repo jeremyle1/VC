@@ -390,6 +390,9 @@ def move_type(cards):
     else:
         return None
 
+def combos_3_of_spades(cards):
+    """Returns a list of all moves of a hand containing the 3 of spades."""
+    return [move for move in all_move_combinations(cards) if Card('3', 'spades') in move]
 
 def possible_moves(cards1, cards2):
     """Returns a list of possible moves of cards2 hand that can beat cards1.
@@ -420,6 +423,7 @@ def all_move_combinations(cards):
     """Returns a list of all valid moves of cards.
     cards: a list of Cards.
     """
+    cards = sorted(cards, key=Card.hearts_high)
     moves = []
     for i in range(1, len(cards)+1):
         for move in combinations(cards, i):

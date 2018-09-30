@@ -50,7 +50,7 @@ class AIPlayer(Player):
         move = []
 
         if not game.last_move:
-            return [self.hand[0]]
+            return random.choice(Rules.combos_3_of_spades(self.hand))
 
         max_skipped = game.num_of_non_empty_hands() - 1
         try:
@@ -75,7 +75,7 @@ class AIPlayer(Player):
             if not move:
                 game.last_time = pygame.time.get_ticks()
                 game.skipped_players.append(self.position)
-                # No player can beat the current hand.
+                # If no player can beat the current hand.
                 if len(game.skipped_players) > game.num_of_non_empty_hands() - 1:
                     game.active_player = (game.active_player + 1) % 4
                     while len(game.players[game.active_player].hand) == 0:
