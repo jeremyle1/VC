@@ -416,7 +416,11 @@ def possible_moves(cards1, cards2):
     elif double_straight(cards1):
         moves = _find_double_straights(cards1, cards2)
 
-    return moves
+    if moves:
+        moves.append([])
+        return moves
+    else:
+        return []
 
 
 def all_move_combinations(cards):
