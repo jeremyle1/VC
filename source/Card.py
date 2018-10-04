@@ -1,18 +1,20 @@
 import pygame
 import os
+from datetime import datetime
 
 class Card:
     ranks = [str(n) for n in range(3, 11)] + list('JQKA2')
     suits = ['spades', 'clubs', 'diamonds', 'hearts']
-    def __init__(self, rank, suit):
+    def __init__(self, rank, suit, load_img = True):
         self.rank = str(rank)
         self.suit = str(suit)
         if self.rank not in self.ranks or self.suit not in self.suits:
             raise ValueError
         self.selected = False
-        self.image = pygame.image.load(os.path.join('./source/', 'images', self.rank.lower() + '_' + self.suit + '.png'))
-        self.scale_card()
-        self.rect = self.image.get_rect()
+        if load_img:
+            self.image = pygame.image.load(os.path.join('./source/', 'images', self.rank.lower() + '_' + self.suit + '.png'))
+            self.scale_card()
+            self.rect = self.image.get_rect()
 
     def hearts_high(self):
         """

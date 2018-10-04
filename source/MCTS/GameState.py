@@ -31,14 +31,12 @@ class GameState():
         new_players = []
         new_hands = []
         new_positions = []
-        start = datetime.now()
         for player in self.players:
             new_hand = []
             new_positions.append(player.position)
             for card in player.hand:
-                new_hand.append(Card(card.rank, card.suit))
+                new_hand.append(Card(card.rank, card.suit, False))
             new_hands.append(new_hand)
-        end = datetime.now()
 
         # Create copies of players.
         for i in range(len(self.players)):
@@ -47,7 +45,6 @@ class GameState():
             new_players.append(player_copy)
 
         st = GameState(self.move[:], new_players, self.skipped[:], self.player_just_moved, self.active_player)
-        print(end - start)
         return st
 
     def get_moves(self):
