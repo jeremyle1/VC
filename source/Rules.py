@@ -420,7 +420,7 @@ def possible_moves(cards1, cards2):
         moves.append([])
         return moves
     else:
-        return []
+        return [[]]
 
 
 def all_move_combinations(cards):

@@ -50,7 +50,7 @@ class AIPlayer(Player):
     def find_best_move(self, game):
         """Returns a list of cards that should be the best move to take. Returns empty list to skip turn."""
         rootstate = GameState(game.last_move, game.players, game.skipped_players, game.last_player, game.active_player)
-        m = UCT(rootstate=rootstate, itermax=3)
+        m = UCT(rootstate=rootstate, itermax=1)
         return m
 
     def make_move(self, game, last_time):
