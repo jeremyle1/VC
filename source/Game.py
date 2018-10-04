@@ -37,10 +37,16 @@ class Game:
 
     def __init_players(self):
         """Creates players. Finds player with 3 of spades."""
-        self.players.append(HumanPlayer('Jeremy', 0, self.deck))
-        self.players.append(AIPlayer('Bob', 1, self.deck))
-        self.players.append(AIPlayer('Lamont', 2, self.deck))
-        self.players.append(AIPlayer('Kobe', 3, self.deck))
+        self.players.append(HumanPlayer('Jeremy', 0))
+        self.players.append(AIPlayer('Bob', 1))
+        self.players.append(AIPlayer('Lamont', 2))
+        self.players.append(AIPlayer('Kobe', 3))
+        for player in self.players:
+            player.get_new_hand(self.deck)
+            try:
+                player.set_card_backs()
+            except AttributeError:
+                pass
 
         # Player with 3 of spades has the first move.
         for player in self.players:

@@ -2,12 +2,14 @@ import pygame
 import os, random
 from source.Player import Player
 import source.Rules as Rules
+from source.MCTS.GameState import GameState
+from source.MCTS.UCT import UCT
+
 
 class AIPlayer(Player):
-    def __init__(self, name, position, deck):
-        Player.__init__(self, name, position, deck)
+    def __init__(self, name, position):
+        Player.__init__(self, name, position)
         self.card_backs = []
-        self.set_card_backs()
 
     def blit_hand(self, screen):
         """Draw hand with back of card instead of front"""
@@ -47,22 +49,9 @@ class AIPlayer(Player):
 
     def find_best_move(self, game):
         """Returns a list of cards that should be the best move to take. Returns empty list to skip turn."""
-        move = []
-
-        if not game.last_move:
-            return random.choice(Rules.combos_3_of_spades(self.hand))
-
-        max_skipped = game.num_of_non_empty_hands() - 1
-        try:
-            if (len(game.skipped_players) == max_skipped and game.last_player == self.position) \
-                    or (len(game.skipped_players) > max_skipped):
-                move = random.choice(Rules.all_move_combinations(self.hand))
-            else:
-                move = random.choice(Rules.possible_moves(game.last_move, self.hand))
-        except:
-            return []
-
-        return move
+        rootstate = GameState(game.last_move, game.players, game.skipped_players, game.last_player, game.active_player)
+        m = UCT(rootstate=rootstate, itermax=3)
+        return m
 
     def make_move(self, game, last_time):
         """Process the player's turn."""

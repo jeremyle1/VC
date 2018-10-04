@@ -3,8 +3,8 @@ from source.Player import Player
 import source.Rules as Rules
 
 class HumanPlayer(Player):
-    def __init__(self, name, position, deck):
-        Player.__init__(self, name, position, deck)
+    def __init__(self, name, position):
+        Player.__init__(self, name, position)
 
     def blit_hand(self, screen):
         """Draw all cards of the player's hand."""
