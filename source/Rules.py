@@ -1,8 +1,5 @@
 from source.Card import Card
 from enum import Enum
-import os
-from itertools import combinations
-from datetime import datetime
 
 
 class Move(Enum):
@@ -112,10 +109,28 @@ def _find_doubles(cards1, cards2):
     cards1: a sorted list containing a pair of cards with the same rank.
     cards2: a sorted list of cards."""
     moves = []
-    for i in range(0, len(cards2) - 1):
-        for j in range(i + 1, len(cards2)):
-            if beats(cards1, [cards2[i], cards2[j]]):
-                moves.append([cards2[i], cards2[j]])
+
+    # Set i and j to the index of the first card in cards2 that is equal to or larger than the lowest rank in cards1.
+    i = 0
+    while cards2[i].rank < cards1[0].rank and (i < (len(cards2) - 1)):
+        i = i + 1
+    j = i
+
+    while i < (len(cards2)-1):
+        while j < len(cards2) and cards2[i].rank == cards2[j].rank:
+            j = j + 1
+        # There are j-i cards with the same rank.
+        if j - i > 0:
+            # Combinations of pairs.
+            for first in range(i, j - 1):
+                for second in range(first + 1, j):
+                    if beats(cards1, [cards2[first], cards2[second]]):
+                        moves.append([cards2[first], cards2[second]])
+            i = j
+        # There are no cards with the same rank as cards2[i]
+        else:
+            i = i + 1
+            j = j + 1
 
     # If cards1 has a 2,
     # Find all double straights in cards2 that have 4 pairs. Any 4 pair double straight can beat any pair of 2's.
@@ -123,7 +138,6 @@ def _find_doubles(cards1, cards2):
         dbl_straight = [Card('3', 'spades') for _ in range(8)]
         for move in _find_double_straights(dbl_straight, cards2):
             moves.append(move)
-
     return moves
 
 
@@ -411,7 +425,6 @@ def possible_moves(cards1, cards2):
         moves = _find_straights(cards1, cards2)
     elif double_straight(cards1):
         moves = _find_double_straights(cards1, cards2)
-
     if moves:
         moves.append([])
         return moves
@@ -451,12 +464,9 @@ def all_move_combinations(cards):
     # Combine all moves.
     for card in cards:
         moves.append([card])
-    start = datetime.now()
     moves.extend(_find_doubles([Card('3', 'spades'), Card('3', 'spades')], cards))
     moves.extend(_find_triples([Card('3', 'spades'), Card('3', 'spades'), Card('3', 'spades')], cards))
     moves.extend(_find_quads([Card('3', 'spades'), Card('3', 'spades'), Card('3', 'spades'), Card('3', 'spades')], cards))
-    end = datetime.now()
     moves.extend(strts)
     moves.extend(dbl_strts)
-    # print('ALL COMBINATIONS:', end-start)
     return moves

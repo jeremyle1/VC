@@ -20,13 +20,12 @@ def UCT(rootstate, itermax):
     # Time in milliseconds the algorithm should run for.
     thinking = 4500
     # Number of iterations.
-    iter = 0
+    curr_iter = 0
 
     # Algorithm stops running when total time the algorithm has run exceeds thinking time, or iter becomes
     # greater than itermax
     while(time.get_ticks() - start_time < thinking) and (iter < itermax):
-        iter = iter + 1
-        # print('iteration', iter)
+        curr_iter = curr_iter + 1
         node = rootnode
         state = rootstate.clone()
 

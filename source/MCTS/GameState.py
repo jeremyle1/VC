@@ -10,7 +10,6 @@
 import source.Rules as Rules
 from source.Card import Card
 from source.Player import Player
-from datetime import datetime
 
 class GameState():
     def __init__(self, move, players, skipped, player_just_moved, active_player):
@@ -51,6 +50,9 @@ class GameState():
         """Returns the possible moves from this game state.
         """
         active_hand = self.players[self.get_player_index(self.active_player)].hand
+        # Active player hand is empty and cannot play another move or skip.
+        if len(active_hand) == 0:
+            return []
         # First move of game.
         if not self.move:
             return Rules.combos_3_of_spades(active_hand)

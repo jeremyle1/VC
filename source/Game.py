@@ -142,40 +142,5 @@ class Game:
             self.skipped_players = []
 
     def next_move(self):
-        if self.active_player == 0:
-            # Check if player is skipped by comparing their skipped move to the current move.
-            # Check when play button or skip button is clicked.
-            # If skip button pressed:
-                # Increment active_player
-                # Add (player position, type of move) to self.skipped_players
-            # If move valid:
-                # Add move to self.moves. Remove card from player's hand.
-            # Increment self.active_player
-            pass
-        else:
-            pass
-            # Check if player is skipped by comparing their skipped move to the current move.
-            # Find best move for AI.
-            # Wait 5 seconds.
-            # Make move
-            # If player skips, Add (player position, type of move) to self.skipped_players
-            # Else:
-                # # Add move to self.moves. Remove card from player's hand.
-            # Increment self.active_player
         temp_move = self.players[self.active_player].make_move(self, self.last_time)
-        # if temp_move:
-        #     self.current_move = temp_move
-
-        # First move of game.
-        # if not self.previous_move and self.current_move:
-        #     # Blit move in center.
-        #     self.blit_move(self.current_move, 600, 450)
-        # elif previous_move and current_move:
-        #     # Blit last move with higher Y.
-        #     # Blit current move in center.
-        #     #previous_move = last_move
-        #     #last_move = current_move
-        # elif previous_move and not current_move:
-        #     # Blit previous move with higher Y.
-        #     # Blit last move in center.
 
