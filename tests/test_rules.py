@@ -175,7 +175,7 @@ class TestRules(unittest.TestCase):
         self.assertEqual(Rules.possible_moves(single1, single2), [[card] for card in single2] + [[]])
         single3 = [Card('2', 'hearts')]
         single4 = [Card('3', 'clubs'), Card('4', 'spades'), Card('A', 'diamonds'), Card('2', 'spades')]
-        self.assertEqual(Rules.possible_moves(single3, single4), [])
+        self.assertEqual(Rules.possible_moves(single3, single4), [[]])
         single5 = [Card('2', 'spades')]
         single6 = [Card('2', 'clubs'), Card('2', 'hearts'), Card('3', 'spades'), Card('3', 'clubs'),
                    Card('4', 'spades'), Card('4', 'clubs'), Card('5', 'spades'), Card('5', 'clubs')]
@@ -189,7 +189,7 @@ class TestRules(unittest.TestCase):
                          [[Card('4', 'spades'), Card('4', 'clubs')], [Card('5', 'diamonds'), Card('5', 'hearts')]] + [[]])
         double3 = [Card('3', 'clubs'), Card('3', 'hearts')]
         double4 = [Card('4', 'spades'), Card('5', 'clubs'), Card('6', 'diamonds'), Card('7', 'hearts')]
-        self.assertEqual(Rules.possible_moves(double3, double4), [])
+        self.assertEqual(Rules.possible_moves(double3, double4), [[]])
         double5 = [Card('2', 'spades'), Card('2', 'clubs')]
         double6 = [Card('2', 'clubs'), Card('2', 'diamonds'), Card('2', 'hearts')]
         self.assertEqual(Rules.possible_moves(double5, double6), [[Card('2', 'clubs'), Card('2', 'diamonds')],
@@ -229,10 +229,10 @@ class TestRules(unittest.TestCase):
                          [[Card('4', 'spades'), Card('4', 'clubs'), Card('4', 'diamonds'), Card('4', 'hearts')]] + [[]])
         quad3 = [Card('3', 'spades'), Card('3', 'clubs'), Card('3', 'diamonds'), Card('3', 'hearts')]
         quad4 = [Card('4', 'spades'), Card('4', 'clubs'), Card('4', 'diamonds')]
-        self.assertEqual(Rules.possible_moves(quad3, quad4), [])
+        self.assertEqual(Rules.possible_moves(quad3, quad4), [[]])
         quad5 = [Card('3', 'spades'), Card('3', 'clubs'), Card('3', 'diamonds'), Card('3', 'hearts')]
         quad6 = [Card('4', 'spades'), Card('4', 'clubs'), Card('4', 'diamonds'), Card('5', 'hearts')]
-        self.assertEqual(Rules.possible_moves(quad5, quad6), [])
+        self.assertEqual(Rules.possible_moves(quad5, quad6), [[]])
         quad7 = [Card('3', 'spades'), Card('3', 'clubs'), Card('3', 'diamonds'), Card('3', 'hearts')]
         quad8 = [Card('4', 'spades'), Card('4', 'clubs'), Card('4', 'diamonds'), Card('4', 'hearts'),
                  Card('5', 'clubs')]
@@ -248,7 +248,7 @@ class TestRules(unittest.TestCase):
         # Straights
         straight1 = [Card('3', 'spades'), Card('4', 'spades'), Card('5', 'spades')]
         straight2 = [Card('2', 'hearts')]
-        self.assertEqual(Rules.possible_moves(straight1, straight2), [])
+        self.assertEqual(Rules.possible_moves(straight1, straight2), [[]])
         straight3 = [Card('3', 'spades'), Card('4', 'spades'), Card('5', 'spades')]
         straight4 = [Card('3', 'spades'), Card('4', 'spades'), Card('5', 'hearts')]
         self.assertEqual(Rules.possible_moves(straight3, straight4),
@@ -260,7 +260,7 @@ class TestRules(unittest.TestCase):
                           [Card('3', 'spades'), Card('4', 'spades'), Card('5', 'hearts')]] + [[]])
         straight7 = [Card('3', 'spades'), Card('4', 'spades'), Card('5', 'spades')]
         straight8 = [Card('3', 'spades'), Card('4', 'spades'), Card('5', 'spades')]
-        self.assertEqual(Rules.possible_moves(straight7, straight8), [])
+        self.assertEqual(Rules.possible_moves(straight7, straight8), [[]])
         straight9 = [Card('3', 'spades'), Card('4', 'spades'), Card('5', 'spades')]
         straight10 = [Card('3', 'spades'), Card('4', 'spades'), Card('5', 'hearts'), Card('6', 'spades')]
         self.assertEqual(Rules.possible_moves(straight9, straight10),
@@ -278,7 +278,7 @@ class TestRules(unittest.TestCase):
                           [Card('7', 'spades'), Card('8', 'spades'), Card('9', 'spades')]] + [[]])
         straight15 = [Card('3', 'spades'), Card('4', 'spades'), Card('5', 'spades')]
         straight16 = []
-        self.assertEqual(Rules.possible_moves(straight15, straight16), [])
+        self.assertEqual(Rules.possible_moves(straight15, straight16), [[]])
 
         # Double Straights
         dbl_straight_eq_len1 = [Card('3', 'spades'), Card('3', 'clubs'), Card('4', 'spades'), Card('4', 'clubs'),
@@ -291,11 +291,11 @@ class TestRules(unittest.TestCase):
                                    Card('5', 'spades'), Card('5', 'clubs')]
         not_enough_cards2 = [Card('3', 'diamonds'), Card('3', 'hearts'), Card('4', 'diamonds'), Card('4', 'hearts'),
                                     Card('5', 'diamonds')]
-        self.assertEqual(Rules.possible_moves(not_enough_cards1, not_enough_cards2), [])
+        self.assertEqual(Rules.possible_moves(not_enough_cards1, not_enough_cards2), [[]])
         not_enough_cards3 = [Card('3', 'spades'), Card('3', 'clubs'), Card('4', 'spades'), Card('4', 'clubs'),
                                    Card('5', 'spades'), Card('5', 'clubs')]
         not_enough_cards4 = [Card('3', 'diamonds')]
-        self.assertEqual(Rules.possible_moves(not_enough_cards3, not_enough_cards4), [])
+        self.assertEqual(Rules.possible_moves(not_enough_cards3, not_enough_cards4), [[]])
         three_rank_combinations1 = [Card('3', 'spades'), Card('3', 'clubs'), Card('4', 'spades'), Card('4', 'clubs'),
                                    Card('5', 'spades'), Card('5', 'clubs')]
         three_rank_combinations2 = [Card('3', 'diamonds'), Card('3', 'hearts'), Card('4', 'diamonds'), Card('4', 'hearts'),
@@ -313,7 +313,7 @@ class TestRules(unittest.TestCase):
                                    Card('5', 'spades'), Card('5', 'clubs')]
         dbl_straight_with_two2 = [Card('3', 'diamonds'), Card('3', 'hearts'), Card('4', 'diamonds'), Card('4', 'hearts'),
                                    Card('2', 'diamonds'), Card('2', 'hearts')]
-        self.assertEqual(Rules.possible_moves(dbl_straight_with_two1, dbl_straight_with_two2), [])
+        self.assertEqual(Rules.possible_moves(dbl_straight_with_two1, dbl_straight_with_two2), [[]])
 
 
 
