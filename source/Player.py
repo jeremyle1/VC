@@ -6,7 +6,7 @@ class Player:
         self.position = position
         self.hand = []
         # milliseconds to pause when AI's turn.
-        self.thinking_time = 1500
+        self.thinking_time = 500
 
     def printCards(self):
         for card in self.hand:

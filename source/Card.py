@@ -5,7 +5,7 @@ from datetime import datetime
 class Card:
     ranks = [str(n) for n in range(3, 11)] + list('JQKA2')
     suits = ['spades', 'clubs', 'diamonds', 'hearts']
-    def __init__(self, rank, suit, load_img = True):
+    def __init__(self, rank, suit, load_img = False):
         self.rank = str(rank)
         self.suit = str(suit)
         if self.rank not in self.ranks or self.suit not in self.suits:

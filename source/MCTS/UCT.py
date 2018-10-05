@@ -9,39 +9,44 @@
 
 from source.MCTS.Node import Node
 import random
+from pygame import time
 
 def UCT(rootstate, itermax):
     """ Conduct a UCT search for itermax iterations starting from rootstate.
             Return the best move from the rootstate."""
 
     rootnode = Node(state = rootstate)
+    start_time = time.get_ticks()
+    # Time in milliseconds the algorithm should run for.
+    thinking = 4500
+    # Number of iterations.
+    iter = 0
 
-    for i in range(itermax):
-        print('iteration', i)
+    # Algorithm stops running when total time the algorithm has run exceeds thinking time, or iter becomes
+    # greater than itermax
+    while(time.get_ticks() - start_time < thinking) and (iter < itermax):
+        iter = iter + 1
+        # print('iteration', iter)
         node = rootnode
         state = rootstate.clone()
 
         # Select
         while node.untried_moves == [] and node.child_nodes != []: # node is fully expanded and non-terminal
-            print('Select')
             node = node.UCT_select_child()
             state.do_move(node.move)
 
         # Expand
         if node.untried_moves != []: # if we can expand (i.e. state/node is non-terminal)
-            print('Expand')
             m = random.choice(node.untried_moves)
             state.do_move(m)
             node = node.add_child(m,state) # add child and descend tree
 
         # Rollout - this can often be made orders of magnitude quicker using a state.GetRandomMove() function
         while (0 not in [len(player.hand) for player in state.players]): # while state is non-terminal
-            # print('Rollout', state.get_moves())
             state.do_move(random.choice(state.get_moves()))
 
         # Backpropagate
         while node != None: # backpropagate from the expanded node and work back to the root node
-            print('Backpropogate')
             if not node.parent:
                 node.visits = node.visits + 1
             else:

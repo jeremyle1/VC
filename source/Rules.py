@@ -2,6 +2,7 @@ from source.Card import Card
 from enum import Enum
 import os
 from itertools import combinations
+from datetime import datetime
 
 
 class Move(Enum):
@@ -103,7 +104,6 @@ def _find_singles(cards1, cards2):
         dbl_straight = [Card('3', 'spades') for _ in range(6)]
         for move in _find_double_straights(dbl_straight, cards2):
             moves.append(move)
-
     return moves
 
 
@@ -144,7 +144,6 @@ def _find_triples(cards1, cards2):
         dbl_straight = [Card('3', 'spades') for _ in range(10)]
         for move in _find_double_straights(dbl_straight, cards2):
             moves.append(move)
-
     return moves
 
 
@@ -156,7 +155,6 @@ def _find_quads(cards1, cards2):
     # Quads must be in a hand of at least 4 cards.
     if len(cards2) < 4:
         return []
-
     moves = []
     i = 0
     while i <= len(cards2):
@@ -168,7 +166,6 @@ def _find_quads(cards1, cards2):
         else:
             # Check for quad starting with the next card.
             i = i + 1
-
     return moves
 
 
@@ -398,7 +395,6 @@ def possible_moves(cards1, cards2):
     """Returns a list of possible moves of cards2 hand that can beat cards1.
     cards1: list of Cards (valid move))
     cards2: list of cards (hand)"""
-
     cards1 = sorted(cards1, key=Card.hearts_high)
     cards2 = sorted(cards2, key=Card.hearts_high)
     moves = []
@@ -429,9 +425,38 @@ def all_move_combinations(cards):
     """
     cards = sorted(cards, key=Card.hearts_high)
     moves = []
-    for i in range(1, len(cards)+1):
-        for move in combinations(cards, i):
-            if len(move) == 1 or double(move) or triple(move) or quad(cards) or straight(move) or double_straight(move):
-                moves.append(list(move))
 
+    # Straight combinations.
+    strts = []
+    if len(cards) >= 3:
+        for i in range(3, len(cards)+1):
+            temp = []
+            for j in range(i):
+                temp.append(Card('3', 'spades'))
+            strt_comb = _find_straights(temp, cards)
+            if strt_comb:
+                strts.extend(strt_comb)
+
+    # Double straight combinations.
+    dbl_strts = []
+    if len(cards) >= 6:
+        for i in range(6, len(cards)+1):
+            temp = []
+            for j in range(i):
+                temp.append(Card('3', 'spades'))
+            dbl_strt_comb = _find_double_straights(temp, cards)
+            if dbl_strt_comb:
+                dbl_strts.extend(dbl_strt_comb)
+
+    # Combine all moves.
+    for card in cards:
+        moves.append([card])
+    start = datetime.now()
+    moves.extend(_find_doubles([Card('3', 'spades'), Card('3', 'spades')], cards))
+    moves.extend(_find_triples([Card('3', 'spades'), Card('3', 'spades'), Card('3', 'spades')], cards))
+    moves.extend(_find_quads([Card('3', 'spades'), Card('3', 'spades'), Card('3', 'spades'), Card('3', 'spades')], cards))
+    end = datetime.now()
+    moves.extend(strts)
+    moves.extend(dbl_strts)
+    # print('ALL COMBINATIONS:', end-start)
     return moves

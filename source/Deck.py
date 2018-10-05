@@ -9,7 +9,7 @@ class Deck:
         """
         Initialize list of 52 cards
         """
-        self.cards = [Card(rank, suit) for rank in Card.ranks for suit in Card.suits]
+        self.cards = [Card(rank, suit, True) for rank in Card.ranks for suit in Card.suits]
         self.undealtCards = self.cards[:]
 
     def print_cards(self):
