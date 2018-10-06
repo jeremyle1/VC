@@ -10,6 +10,7 @@
 from source.MCTS.Node import Node
 import random
 from pygame import time
+from timeit import default_timer as timer
 
 def UCT(rootstate, itermax):
     """ Conduct a UCT search for itermax iterations starting from rootstate.
@@ -24,7 +25,7 @@ def UCT(rootstate, itermax):
 
     # Algorithm stops running when total time the algorithm has run exceeds thinking time, or iter becomes
     # greater than itermax
-    while(time.get_ticks() - start_time < thinking) and (iter < itermax):
+    while(time.get_ticks() - start_time < thinking) and (curr_iter < itermax):
         curr_iter = curr_iter + 1
         node = rootnode
         state = rootstate.clone()

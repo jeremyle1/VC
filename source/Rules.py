@@ -1,5 +1,6 @@
 from source.Card import Card
 from enum import Enum
+from timeit import default_timer as timer
 
 
 class Move(Enum):
@@ -89,7 +90,6 @@ def beats(cards1, cards2):
     elif double_straight(cards1):
         return len(cards1) == len(cards2) and double_straight(cards2) and\
                cards2[-1].hearts_high() > cards1[-1].hearts_high()
-
     return False
 
 
@@ -188,12 +188,11 @@ def _find_straights(cards1, cards2):
     cards1: a sorted list of cards consisting of a straight.
     cards2: a sorted list of cards."""
 
-    if len(cards2) < len(cards1):
-        return []
-
     ranks = [str(n) for n in range(3, 11)] + list('JQKA')
     cards2_copy = [card for card in cards2 if card.rank != '2']
 
+    if len(cards2_copy) < len(cards1):
+        return []
     # List of lists of cards. Every inner list is a subset of cards2 that can beat cards1.
     moves = []
 
@@ -401,9 +400,11 @@ def move_type(cards):
     else:
         return None
 
+
 def combos_3_of_spades(cards):
     """Returns a list of all moves of a hand containing the 3 of spades."""
     return [move for move in all_move_combinations(cards) if Card('3', 'spades') in move]
+
 
 def possible_moves(cards1, cards2):
     """Returns a list of possible moves of cards2 hand that can beat cards1.
