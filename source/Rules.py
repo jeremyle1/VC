@@ -1,5 +1,6 @@
 from source.Card import Card
 from enum import Enum
+from itertools import combinations
 from timeit import default_timer as timer
 
 
@@ -146,11 +147,26 @@ def _find_triples(cards1, cards2):
         cards1: a sorted list containing three cards with the same rank.
         cards2: a sorted list of cards."""
     moves = []
-    for i in range(0, len(cards2) - 2):
-        for j in range(i + 1, len(cards2)-1):
-            for k in range(j + 1, len(cards2)):
-                if beats(cards1, [cards2[i], cards2[j], cards2[k]]):
-                    moves.append([cards2[i], cards2[j], cards2[k]])
+    # Set i and j to the index of the first card in cards2 that is equal to or larger than the lowest rank in cards1.
+    i = 0
+    while cards2[i].rank < cards1[0].rank and (i < (len(cards2) - 2)):
+        i = i + 1
+    j = i
+
+    while i < (len(cards2)-2):
+        while j < len(cards2) and cards2[i].rank == cards2[j].rank:
+            j = j + 1
+        # There are j-i cards with the same rank.
+        if j - i > 1:
+            # Combinations of triples.
+            for comb in combinations(cards2[i:j], 3):
+                if beats(cards1, comb):
+                    moves.append(list(comb))
+            i = j
+        # There are no cards with the same rank as cards2[i]
+        else:
+            i = i + 1
+            j = j + 1
 
     # If cards1 has a 2,
     # Find all double straights in cards2 that have 5 pairs. Any 5 pair double straight can beat any triple of 2's.
